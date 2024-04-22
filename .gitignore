@@ -4,3 +4,4 @@ results/
 dataset/
 lmser.zip
 __pycache__/
+*.npy
