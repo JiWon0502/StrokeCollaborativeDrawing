@@ -1,0 +1,7 @@
+rdp
+Pillow
+matplotlib
+numpy
+tk
+torch torchvision
+opencv-python
