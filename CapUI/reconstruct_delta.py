@@ -1,10 +1,11 @@
 import tkinter as tk
 import numpy as np
+import rdp_tmp
 
 def reconstruct_drawing(canvas, deltas):
     if len(deltas) == 0:
         print("no input strokes")
-        returns
+        return
         
     start_x = start_y = current_x = current_y = 0
     for dx, dy, mouse_button_pressed in deltas:
@@ -20,8 +21,12 @@ def reconstruct_drawing(canvas, deltas):
 
 def load_and_reconstruct_drawing(canvas):
     try:
-        deltas = np.load("mouse_deltas.npy")
+        #deltas = np.load("mouse_deltas.npy")
+        deltas = np.load('mouse_deltas.npy')
+        print(deltas)
         reconstruct_drawing(canvas, deltas)
+        #simplified = rdp_tmp.rdp(deltas, 2.0)
+
     except FileNotFoundError:
         print("No saved deltas file found.")
 
@@ -29,7 +34,7 @@ def main():
     root = tk.Tk()
     root.title("Reconstruct Drawing")
 
-    canvas = tk.Canvas(root, width=400, height=400, bg="white")
+    canvas = tk.Canvas(root, width=256, height=256, bg="white")
     canvas.pack()
 
     load_button = tk.Button(root, text="Load and Reconstruct Drawing", command=lambda: load_and_reconstruct_drawing(canvas))
