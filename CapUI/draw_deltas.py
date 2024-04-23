@@ -27,6 +27,12 @@ def paint(event):
 def save_deltas():
     np.save("mouse_deltas.npy", np.array(deltas))
 
+# ndjson : positioned and scaled the data into a 256x256 region
+# 75K samples (70K Training, 2.5K Validation, 2.5K Test)
+# has been randomly selected from each category,
+# processed with RDP line simplification with an epsilon parameter of 2.0.
+
+# set the canvas size to 256 * 256
 def main():
     global root, canvas, deltas, last_x, last_y, is_pressed
     root = tk.Tk()
@@ -36,7 +42,7 @@ def main():
     is_pressed = False
     deltas = []
 
-    canvas = tk.Canvas(root, width=400, height=400, bg="white")
+    canvas = tk.Canvas(root, width=256, height=256, bg="white")
     canvas.pack()
 
     canvas.bind("<Button-1>", start_paint)
