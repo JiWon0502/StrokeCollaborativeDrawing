@@ -17,6 +17,7 @@ from utils.inference_sketch_processing import make_graph, draw_three, make_graph
 # cuda -> CPU
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
+
 ################################# load and prepare data
 class SketchesDataset:
     def __init__(self, path: str, category: list, mode="train"):
@@ -75,7 +76,7 @@ class SketchesDataset:
         """Normalize entire dataset (delta_x, delta_y) by the scaling factor.
         将所有的sketches 标准化, 即除以标准差. 使得方差等于1"""
         data = []
-        #scale_factor = self.calculate_normalizing_scale_factor(sketches)
+        # scale_factor = self.calculate_normalizing_scale_factor(sketches)
         scale_factor = 44.18034
         for sketch in sketches:
             sketch[:, 0:2] /= scale_factor
@@ -118,8 +119,10 @@ class SketchesDataset:
             adjs.append(_adj_matrix)
 
         if hp.use_cuda:
-            batch = torch.from_numpy(np.stack(sketches, 1)).to(device).float()  # cuda() -> to(device) # (Nmax, batch_size, 5)
-            graphs = torch.from_numpy(np.stack(graphs, 0)).to(device).float()  # cuda() -> to(device) # (batch_size, len, 5)
+            batch = torch.from_numpy(np.stack(sketches, 1)).to(
+                device).float()  # cuda() -> to(device) # (Nmax, batch_size, 5)
+            graphs = torch.from_numpy(np.stack(graphs, 0)).to(
+                device).float()  # cuda() -> to(device) # (batch_size, len, 5)
             adjs = torch.from_numpy(np.stack(adjs, 0)).to(device).float()  # cuda() -> to(device)
 
         else:
@@ -182,10 +185,10 @@ encoder and decoder modules
 class Model:
     def __init__(self):
         if hp.use_cuda:
-            self.encoder: nn.Module = myencoder(hps = hp).to(device) # cuda() -> to(device)
-            self.decoder: nn.Module = DecoderRNN().to(device) # cuda() -> to(device)
+            self.encoder: nn.Module = myencoder(hps=hp).to(device)  # cuda() -> to(device)
+            self.decoder: nn.Module = DecoderRNN().to(device)  # cuda() -> to(device)
         else:
-            self.encoder: nn.Module = myencoder(hps =hp)
+            self.encoder: nn.Module = myencoder(hps=hp)
             self.decoder: nn.Module = DecoderRNN()
         self.encoder_optimizer = optim.Adam(self.encoder.parameters(), hp.lr)
         self.decoder_optimizer = optim.Adam(self.decoder.parameters(), hp.lr)
@@ -230,7 +233,7 @@ class Model:
             #     continue
             print(f"drawing {category_name} {count}")
             if hp.use_cuda:
-                sos = torch.Tensor([0, 0, 1, 0, 0]).view(1, 1, -1).to(device) # cuda() -> to(device)
+                sos = torch.Tensor([0, 0, 1, 0, 0]).view(1, 1, -1).to(device)  # cuda() -> to(device)
             else:
                 sos = torch.Tensor([0, 0, 1, 0, 0]).view(1, 1, -1)
             s = sos
@@ -243,7 +246,7 @@ class Model:
                 # decode:
 
                 self.pi, self.mu_x, self.mu_y, self.sigma_x, self.sigma_y, \
-                self.rho_xy, self.q, hidden, cell = \
+                    self.rho_xy, self.q, hidden, cell = \
                     self.decoder(_input, self.z, hidden_cell)
 
                 hidden_cell = (hidden, cell)
@@ -261,11 +264,10 @@ class Model:
             ret_seq_z = np.asarray(seq_z)
             ret_sequence = np.stack([ret_seq_x, ret_seq_y, ret_seq_z]).T
             _graph_tensor, _adj_matrix = make_graph_(ret_sequence, graph_num=hp.graph_number,
-                                                    graph_picture_size=hp.graph_picture_size, mask_prob=0.0)
+                                                     graph_picture_size=hp.graph_picture_size, mask_prob=0.0)
             _graph_tensor = torch.tensor(_graph_tensor).to(torch.float)
-            _, ret_mu, _, _, _, _ = self.encoder(_graph_tensor.to(device).unsqueeze(0)) # cuda() -> to(device)
+            _, ret_mu, _, _, _, _ = self.encoder(_graph_tensor.to(device).unsqueeze(0))  # cuda() -> to(device)
             ret_z_list.append(ret_mu.cpu().numpy())
-
 
             # visualize result:
             x_sample = np.cumsum(seq_x, 0)  # 累加, 梯形求和
@@ -285,23 +287,21 @@ class Model:
             cv2.imwrite(f"{save_middle_path}/sketch/{category_name}/{sketch_index}.jpg", sketch_cv)
             # cv2.imwrite(f"{save_middle_path}/sketch/{category_name}/{sketch_index}.jpg", _sketch)
 
-            #make_image(sequence, count - 1, name=f"_{category_name}", path=f"./{save_middle_path}/sketch/")
-            
-            
-            os.makedirs(f"{save_middle_path}/xyz/{category_name}", exist_ok=True) # 추가
-            np.savez(f"{save_middle_path}/xyz/{category_name}/{sketch_index}.npz", x=np.array(seq_x), y=np.array(seq_y), z=np.array(seq_z)) # 추가
+            # make_image(sequence, count - 1, name=f"_{category_name}", path=f"./{save_middle_path}/sketch/")
 
-            
+            os.makedirs(f"{save_middle_path}/xyz/{category_name}", exist_ok=True)  # 추가
+            np.savez(f"{save_middle_path}/xyz/{category_name}/{sketch_index}.npz", x=np.array(seq_x), y=np.array(seq_y),
+                     z=np.array(seq_z))  # 추가
+
             if count == category_count:
                 os.makedirs(f"{save_middle_path}/npz", exist_ok=True)
                 np.savez(f"./{save_middle_path}/npz/{category_name}.npz", z=np.array(result_z_list))
                 result_z_list = []
-                
-                
+
                 os.makedirs(f"{save_middle_path}/retnpz", exist_ok=True)
                 np.savez(f"./{save_middle_path}/retnpz/{category_name}.npz", z=np.array(ret_z_list))
                 ret_z_list = []
-                
+
                 count = 0
                 print(f"{category_name} finished")
                 category_flag += 1
@@ -309,16 +309,12 @@ class Model:
                     category_name = sketch_dataset.category[category_flag].split(".")[0]
                     category_count = sketch_dataset.sketches_categroy_count[category_flag]
 
-
-                                                                      
-                      
-
     def conditional_generate_by_z(self, z, index=-1, plt_show=False):  #
         self.encoder.eval()
         self.decoder.eval()
         with torch.no_grad():
             if hp.use_cuda:
-                sos = torch.Tensor([0, 0, 1, 0, 0]).view(1, 1, -1).to(device) # cuda() -> to(device)
+                sos = torch.Tensor([0, 0, 1, 0, 0]).view(1, 1, -1).to(device)  # cuda() -> to(device)
             else:
                 sos = torch.Tensor([0, 0, 1, 0, 0]).view(1, 1, -1)
             s = sos
@@ -330,9 +326,9 @@ class Model:
                 _input = torch.cat([s, z.unsqueeze(0)], 2)  # start of stroke concatenate with z
                 # decode:
                 self.pi, \
-                self.mu_x, self.mu_y, \
-                self.sigma_x, self.sigma_y, \
-                self.rho_xy, self.q, hidden, cell = self.decoder(_input, z, hidden_cell)
+                    self.mu_x, self.mu_y, \
+                    self.sigma_x, self.sigma_y, \
+                    self.rho_xy, self.q, hidden, cell = self.decoder(_input, z, hidden_cell)
                 hidden_cell = (hidden, cell)
                 # sample from parameters:
                 s, dx, dy, pen_down, eos = self.sample_next_state()
@@ -349,7 +345,7 @@ class Model:
             x_sample = np.cumsum(seq_x, 0)  # 累加, 梯形求和
             y_sample = np.cumsum(seq_y, 0)
             z_sample = np.array(seq_z)
-                                      
+
             sequence = np.stack([x_sample, y_sample, z_sample]).T
             if plt_show:
                 make_image(sequence, index, name=f"_z_generated", path="./visualize/generate_z/")
@@ -387,7 +383,7 @@ class Model:
         next_state[1] = y
         next_state[q_idx + 2] = 1
         if hp.use_cuda:
-            return next_state.to(device).view(1, 1, -1), x, y, q_idx == 1, q_idx == 2 # cuda() -> to(device)
+            return next_state.to(device).view(1, 1, -1), x, y, q_idx == 1, q_idx == 2  # cuda() -> to(device)
         else:
             return next_state.view(1, 1, -1), x, y, q_idx == 1, q_idx == 2
 
@@ -403,7 +399,7 @@ if __name__ == "__main__":
     import glob
     import cv2
 
-    hp.mask_prob = 0.1 #0.0 0.1 0.3 0.5
+    hp.mask_prob = 0.3  # 0.0 0.1 0.3 0.5
     sketch_dataset = SketchesDataset(hp.data_location, hp.category, "test")
     hp.Nmax = sketch_dataset.Nmax
     hp.Nmax = 177

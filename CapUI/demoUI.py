@@ -1,9 +1,11 @@
 import tkinter as tk
 import numpy as np
-import draw_deltas as dd
-import MouseDrawingDclass
-from shapely.geometry import LineString # rdp algorithm
+import reconstruct_delta as rd
+import MousePainter as mp
+from utils import rdp
 
-
-
+if __name__ == "__main__":
+    painter = mp.MousePainter()
+    painter.run()
+    d_coords = painter.deltas
 
