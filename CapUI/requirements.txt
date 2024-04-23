@@ -5,3 +5,4 @@ numpy
 tk
 torch torchvision
 opencv-python
+shapely
