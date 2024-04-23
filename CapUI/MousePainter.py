@@ -56,6 +56,7 @@ class MousePainter:
         self.root.mainloop()
 
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # Evaluation input filepaths
