@@ -5,6 +5,8 @@ import argparse
 class MousePainter:
     def __init__(self, args):
         self.root = tk.Tk()
+        self.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
+
         # drawing frame, RDP frame, AI frame
         self.frame_draw = tk.Frame(self.root)
         self.frame_rdp = tk.Frame(self.root)
@@ -22,7 +24,7 @@ class MousePainter:
         self.last_y = 0
         self.is_pressed = False
 
-        # ( dx, dy, penstate )
+        # ( dx, dy, pen_state )
         self.deltas = []
 
         # initialize canvas
@@ -39,19 +41,18 @@ class MousePainter:
         self.deltas = []
 
     # Initialize for stroke drawing
-    # button !!!!!!
     def frame_draw_init(self):
         self.frame_draw.root = self.root
         self.frame_draw.root.title("Drawing with Mouse")
 
-        self.frame_draw.canvas = tk.Canvas(self.frame_draw.root, width=256, height=256, bg="white")
+        self.frame_draw.canvas = self.canvas
         self.frame_draw.canvas.pack()
 
         self.frame_draw.canvas.bind("<Button-1>", self.start_paint)
         self.frame_draw.canvas.bind("<ButtonRelease-1>", self.stop_paint)
         self.frame_draw.canvas.bind("<B1-Motion>", self.paint)
 
-        self.frame_draw.erase_button = tk.Button(self.frame_draw.root, text="Erase", command=self.init_drawing_vars)
+        self.frame_draw.erase_button = tk.Button(self.frame_draw.root, text="Erase", command=self.clear_canvas)
         self.frame_draw.erase_button.pack(side="left")
 
         self.frame_draw.exit_button = tk.Button(self.frame_draw.root, text="Exit", command=self.exit_application)
@@ -60,15 +61,18 @@ class MousePainter:
         self.frame_draw.save_button = tk.Button(self.frame_draw.root, text="Save Deltas", command=self.save_deltas)
         self.frame_draw.save_button.pack(side="left")
 
+        self.frame_draw.next_button = tk.Button(self.frame_draw.root, text="Next", command=self.next_frame)
+        self.frame_draw.next_button.pack(side="left")
+
     # button Implementation!!!!!!
     def frame_rdp_init(self):
         self.frame_rdp.root = self.root
         self.frame_rdp.root.title("Drawing after RDP")
 
-        self.frame_rdp.canvas = tk.Canvas(self.frame_rdp.root, width=256, height=256, bg="white")
+        self.frame_rdp.canvas = self.canvas
         self.frame_rdp.canvas.pack()
 
-        self.frame_rdp.next_button = tk.Button(self.frame_rdp.root, text="Next", command=self.init_drawing_vars)
+        self.frame_rdp.next_button = tk.Button(self.frame_rdp.root, text="Next", command=self.next_frame)
         self.frame_rdp.next_button.pack(side="left")
 
         self.frame_rdp.exit_button = tk.Button(self.frame_rdp.root, text="Exit", command=self.exit_application)
@@ -81,10 +85,10 @@ class MousePainter:
         self.frame_ai.root = self.root
         self.frame_ai.root.title("Drawing after AI")
 
-        self.frame_ai.canvas = tk.Canvas(self.frame_ai.root, width=256, height=256, bg="white")
+        self.frame_ai.canvas = self.canvas
         self.frame_ai.canvas.pack()
 
-        self.frame_ai.next_button = tk.Button(self.frame_ai.root, text="Next", command=self.init_drawing_vars)
+        self.frame_ai.next_button = tk.Button(self.frame_ai.root, text="Next", command=self.next_frame)
         self.frame_ai.next_button.pack(side="left")
 
         self.frame_ai.exit_button = tk.Button(self.frame_ai.root, text="Exit", command=self.exit_application)
@@ -141,6 +145,20 @@ class MousePainter:
     def run(self):
         self.root.mainloop()
 
+    # called with the button next in every frame
+    def next_frame(self):
+        # Hide the current frame
+        self.frames[self.current_frame_index].pack_forget()
+        # Move to the next frame
+        self.current_frame_index = (self.current_frame_index + 1) % len(self.frames)
+        # Show the next frame
+        self.frames[self.current_frame_index].pack()
+
+    # called with the button erase in frame_draw
+    def clear_canvas(self):
+        # Delete all items drawn on the canvas
+        self.canvas.delete("all")
+
     # called with the button exit in every frame
     def exit_application(self):
         self.root.quit()
@@ -148,7 +166,7 @@ class MousePainter:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # Evaluation input filepaths
-    parser.add_argument('--savefile_name', type=str, help='set output file name for original input', default='mouse_deltas.npy')
+    parser.add_argument('--save_file_name', type=str, help='set output file name for original input', default='mouse_deltas.npy')
     parser.add_argument('--rdp_file_name', type=str, help='set output file name for rdp', default='rdp_deltas.npy')
     parser.add_argument('--ai_file_name', type=str, help='set output file name for AI drawing', default='ai_deltas.npy')
     args = parser.parse_args()
