@@ -5,15 +5,14 @@ import argparse
 class MousePainter:
     def __init__(self, args):
         self.root = tk.Tk()
-        self.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
 
         # drawing frame, RDP frame, AI frame
         self.frame_draw = tk.Frame(self.root)
         self.frame_rdp = tk.Frame(self.root)
         self.frame_ai = tk.Frame(self.root)
 
-        self.current_frame_index = 0
-        self.frames = [self.frame_draw, self.frame_rdp, self.frame_ai]
+        #self.current_frame_index = 0
+        #self.frames = [self.frame_draw, self.frame_rdp, self.frame_ai]
 
         # --savefile_name to change the name of the stroke npy file
         self.save_file_name = args.save_file_name
@@ -42,10 +41,10 @@ class MousePainter:
 
     # Initialize for stroke drawing
     def frame_draw_init(self):
-        self.frame_draw.root = self.root
-        self.frame_draw.root.title("Drawing with Mouse")
+        self.frame_draw.root = tk.LabelFrame(self.root, text="Drawing with Mouse")
+        self.frame_draw.root.pack()
 
-        self.frame_draw.canvas = self.canvas
+        self.frame_draw.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
         self.frame_draw.canvas.pack()
 
         self.frame_draw.canvas.bind("<Button-1>", self.start_paint)
@@ -66,10 +65,10 @@ class MousePainter:
 
     # button Implementation!!!!!!
     def frame_rdp_init(self):
-        self.frame_rdp.root = self.root
-        self.frame_rdp.root.title("Drawing after RDP")
+        self.frame_rdp.root = tk.LabelFrame(self.root, text="Drawing after RDP")
+        self.frame_rdp.root.pack()
 
-        self.frame_rdp.canvas = self.canvas
+        self.frame_rdp.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
         self.frame_rdp.canvas.pack()
 
         self.frame_rdp.next_button = tk.Button(self.frame_rdp.root, text="Next", command=self.next_frame)
@@ -82,10 +81,10 @@ class MousePainter:
 
     # button Implementation!!!!!!
     def frame_ai_init(self):
-        self.frame_ai.root = self.root
-        self.frame_ai.root.title("Drawing after AI")
+        self.frame_ai.root = tk.LabelFrame(self.root, text="Drawing after AI")
+        self.frame_ai.root.pack()
 
-        self.frame_ai.canvas = self.canvas
+        self.frame_ai.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
         self.frame_ai.canvas.pack()
 
         self.frame_ai.next_button = tk.Button(self.frame_ai.root, text="Next", command=self.next_frame)
@@ -110,7 +109,7 @@ class MousePainter:
         dy = y - self.last_y
         self.deltas.append((dx, dy, not self.is_pressed))
         if self.is_pressed:
-            self.canvas.create_line((self.last_x, self.last_y, x, y), fill="black", width=2)
+            self.frame_draw.canvas.create_line((self.last_x, self.last_y, x, y), fill="black", width=2)
         self.last_x, self.last_y = x, y
 
     # called from load_and_reconstruct function
@@ -147,17 +146,18 @@ class MousePainter:
 
     # called with the button next in every frame
     def next_frame(self):
+        pass
         # Hide the current frame
-        self.frames[self.current_frame_index].pack_forget()
+        #self.frames[self.current_frame_index].pack_forget()
         # Move to the next frame
-        self.current_frame_index = (self.current_frame_index + 1) % len(self.frames)
+        #self.current_frame_index = (self.current_frame_index + 1) % len(self.frames)
         # Show the next frame
-        self.frames[self.current_frame_index].pack()
+        #self.frames[self.current_frame_index].pack()
 
     # called with the button erase in frame_draw
     def clear_canvas(self):
         # Delete all items drawn on the canvas
-        self.canvas.delete("all")
+        self.frame_draw.canvas.delete("all")
 
     # called with the button exit in every frame
     def exit_application(self):
