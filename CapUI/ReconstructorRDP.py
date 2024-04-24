@@ -33,12 +33,6 @@ class ReconstructorRDP:
             if pen_state1 == 0:
                 self.canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
 
-    def load_and_reconstruct_from_data(self):
-        try:
-            data = np.load(data_var_name)
-            self.reconstruct_drawing(data)
-        except FileNotFoundError:
-            print("No saved data file found.")
 
     def load_and_reconstruct_from_file(self):
         try:
@@ -49,9 +43,6 @@ class ReconstructorRDP:
 
     def run(self):
         self.root.mainloop()
-        root = tk.Tk()
-        root.title("Reconstruct Drawing")
-        root.mainloop()
 
 if __name__ == "__main__":
 
