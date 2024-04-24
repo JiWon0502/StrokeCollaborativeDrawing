@@ -4,18 +4,19 @@ import argparse
 
 class MousePainter:
     def __init__(self, args):
+        self.root = None
         self.save_file_name = args.savefile_name
-        self.root = tk.Tk()
-        self.root.title("Drawing with Mouse")
-
         self.last_x = 0
         self.last_y = 0
         self.is_pressed = False
         self.deltas = []
 
-        self.canvas_init()
+        self.canvas_draw_init()
 
-    def canvas_init(self):
+    def canvas_draw_init(self):
+        self.root = tk.Tk()
+        self.root.title("Drawing with Mouse")
+
         self.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
         self.canvas.pack()
 
