@@ -1,6 +1,5 @@
 import tkinter as tk
 import numpy as np
-import rdp_tmp
 
 def reconstruct_drawing(canvas, deltas):
     if len(deltas) == 0:

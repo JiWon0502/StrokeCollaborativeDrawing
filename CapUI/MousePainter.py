@@ -4,6 +4,7 @@ import argparse
 
 class MousePainter:
     def __init__(self, args):
+        self.save_file_name = args.savefile_name
         self.root = tk.Tk()
         self.root.title("Drawing with Mouse")
 
@@ -21,6 +22,7 @@ class MousePainter:
         self.canvas.bind("<Button-1>", self.start_paint)
         self.canvas.bind("<ButtonRelease-1>", self.stop_paint)
         self.canvas.bind("<B1-Motion>", self.paint)
+
         self.exit_button = tk.Button(self.root, text="Exit", command=self.exit_application)
         self.exit_button.pack()
 
@@ -50,11 +52,10 @@ class MousePainter:
         self.last_x, self.last_y = x, y
 
     def save_deltas(self):
-        np.save(args.savefile_name, np.array(self.deltas))
+        np.save( self.save_file_name, np.array(self.deltas))
 
     def run(self):
         self.root.mainloop()
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
