@@ -7,6 +7,8 @@ class MousePainter:
         self.root = tk.Tk()
         # Set the title of the window
         self.root.title("Stroke-based Collaborative Drawing of AI and Human")
+        self.running = True
+        self.exit = False
 
         # drawing frame, RDP frame, AI frame
         self.frame_draw = tk.Frame(self.root)
@@ -132,24 +134,25 @@ class MousePainter:
     def save_deltas(self):
         np.save( self.save_file_name, np.array(self.deltas))
 
+    # run while self.running == True
     def run(self):
-        self.root.mainloop()
+        while self.running :
+            self.root.mainloop()
+        else :
+            self.root.quit()
 
     # called with the button erase in frame_draw
     def clear_canvas(self):
         # Delete all items drawn on the canvas
         self.frame_draw.canvas.delete("all")
 
-    # called with next_button
+    # called with next_button -> stop the tkinter and return to main function
     def next_application(self):
         print(self.current_frame_index, self.frames[self.current_frame_index])
-        #
-        if self.current_frame_index == 0:
-            pass
-        elif self.current_frame_index == 1:
-            pass
-        else :
-            pass
+        # self.current_frame_index == 0 : Mouse Drawing -> RDP
+        # self.current_frame_index == 1 : RDP algorithm -> AI
+        # self.current_frame_index == 2 : AI -> Mouse Drawing
+        self.running = False
         self.current_frame_index = (self.current_frame_index + 1) % len(self.frames)
 
     def save_application(self):
@@ -157,6 +160,7 @@ class MousePainter:
 
     # called with the button exit in every frame
     def exit_application(self):
+        self.exit = True
         self.root.quit()
 
     # initialize last_x, last_y, is_pressed, deltas

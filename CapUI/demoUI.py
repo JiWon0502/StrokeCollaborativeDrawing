@@ -11,7 +11,15 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
     painter = MP.MousePainter(args)
-    painter.run()
-
-
-
+    while not painter.exit:
+        painter.run()
+        # self.current_frame_index == 0 : Mouse Drawing -> RDP
+        # self.current_frame_index == 1 : RDP algorithm -> AI
+        # self.current_frame_index == 2 : AI -> Mouse Drawing
+        if painter.current_frame_index == 0 :
+            pass
+        elif painter.current_frame_index == 1:
+            pass
+        else :
+            pass
+        painter.running = True
