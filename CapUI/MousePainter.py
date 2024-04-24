@@ -5,17 +5,30 @@ import argparse
 class MousePainter:
     def __init__(self, args):
         self.root = None
+        # --savefile_name to change the name of the stroke npy file
         self.save_file_name = args.savefile_name
+
+        self.last_x = 0
+        self.last_y = 0
+
+        self.is_pressed = False
+
+        # ( dx, dy, penstate )
+        self.deltas = []
+
+        # initialize canvas
+        self.canvas_draw_init()
+
+    # Initialize for stroke drawing
+    def canvas_draw_init(self):
+        self.root = tk.Tk()
+        self.root.title("Drawing with Mouse")
+
+        # initialize all drawings
         self.last_x = 0
         self.last_y = 0
         self.is_pressed = False
         self.deltas = []
-
-        self.canvas_draw_init()
-
-    def canvas_draw_init(self):
-        self.root = tk.Tk()
-        self.root.title("Drawing with Mouse")
 
         self.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
         self.canvas.pack()
@@ -24,11 +37,49 @@ class MousePainter:
         self.canvas.bind("<ButtonRelease-1>", self.stop_paint)
         self.canvas.bind("<B1-Motion>", self.paint)
 
+        self.erase_button = tk.Button(self.root, text="Erase", command=self.canvas_draw_init)
+        self.erase_button.pack(side="left")
+
         self.exit_button = tk.Button(self.root, text="Exit", command=self.exit_application)
-        self.exit_button.pack()
+        self.exit_button.pack(side="left")
 
         self.save_button = tk.Button(self.root, text="Save Deltas", command=self.save_deltas)
-        self.save_button.pack()
+        self.save_button.pack(side="left")
+
+    # Use deltas[] if it's length > 0. Or load the saved data.
+    def get_data(self):
+        if len(self.deltas) > 0 :
+            data = self.deltas
+        else :
+            data = np.load(self.save_file_name)
+        return data
+
+    def canvas_reconstruct_init(self):
+        self.root = tk.Tk()
+        self.root.title("Reconstruct Drawing")
+
+        self.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
+        self.canvas.pack()
+
+        self.load_and_reconstruct()
+
+    def load_and_reconstruct(self):
+        try:
+            data = self.get_data()
+            self.reconstruct_drawing(data)
+        except FileNotFoundError:
+            print("No saved data file found.")
+
+    def reconstruct_drawing(self, data):
+        if len(data) == 0:
+            print("No input data.")
+            return
+
+        for i in range(len(data) - 1):
+            x1, y1, pen_state1 = data[i]
+            x2, y2, pen_state2 = data[i + 1]
+            if pen_state1 == 0:
+                self.canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
 
     def exit_application(self):
         self.root.quit()
@@ -66,3 +117,4 @@ if __name__ == "__main__":
 
     painter = MousePainter(args)
     painter.run()
+
