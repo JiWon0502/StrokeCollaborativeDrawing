@@ -5,11 +5,18 @@ import argparse
 class MousePainter:
     def __init__(self, args):
         self.root = tk.Tk()
+        # Set the title of the window
+        self.root.title("Stroke-based Collaborative Drawing of AI and Human")
 
         # drawing frame, RDP frame, AI frame
         self.frame_draw = tk.Frame(self.root)
         self.frame_rdp = tk.Frame(self.root)
         self.frame_ai = tk.Frame(self.root)
+
+        # Grid frames horizontally
+        self.frame_draw.grid(row=0, column=0, sticky="new")
+        self.frame_rdp.grid(row=0, column=1, sticky="new")
+        self.frame_ai.grid(row=0, column=2, sticky="new")
 
         self.current_frame_index = 0
         self.frames = [self.frame_draw, self.frame_rdp, self.frame_ai]
@@ -19,81 +26,66 @@ class MousePainter:
         self.rdp_file_name = args.rdp_file_name
         self.ai_file_name = args.ai_file_name
 
-        self.last_x = 0
-        self.last_y = 0
-        self.is_pressed = False
-
-        # ( dx, dy, pen_state )
-        self.deltas = []
-
         # initialize canvas
         self.frame_draw_init()
         self.frame_rdp_init()
         self.frame_ai_init()
 
-    # initialize last_x, last_y, is_pressed, deltas
-    def init_drawing_vars(self):
-        # initialize all drawings
-        self.last_x = 0
-        self.last_y = 0
-        self.is_pressed = False
-        self.deltas = []
+        self.create_buttons()
+        self.init_drawing_vars()
+
+
+    # Initialize the buttons
+    def create_buttons(self):
+        # Create buttons
+        self.next_button = tk.Button(self.root, text="Next Step", command=self.next_application)
+        self.save_button = tk.Button(self.root, text="Save Process / Results", command=self.save_application)
+        self.exit_button = tk.Button(self.root, text="Press here to Exit", command=self.exit_application)
+
+        # Place buttons
+        self.next_button.grid(row=1, column=0, sticky="ew")
+        self.save_button.grid(row=1, column=1, sticky="ew")
+        self.exit_button.grid(row=1, column=2, sticky="ew")
 
     # Initialize for stroke drawing
     def frame_draw_init(self):
-        self.frame_draw.root = tk.LabelFrame(self.root, text="Drawing with Mouse")
-        self.frame_draw.root.pack()
+        self.frame_draw.label_frame = tk.LabelFrame(self.frame_draw, text="Drawing with Mouse")
+        self.frame_draw.label_frame.grid(row=0, column=0, columnspan=3, sticky="nsew")
 
-        self.frame_draw.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
-        self.frame_draw.canvas.pack()
+        self.frame_draw.canvas = tk.Canvas(self.frame_draw.label_frame, width=256, height=256, bg="white")
+        self.frame_draw.canvas.grid(row=1, column=0, sticky="nsew")
 
         self.frame_draw.canvas.bind("<Button-1>", self.start_paint)
         self.frame_draw.canvas.bind("<ButtonRelease-1>", self.stop_paint)
         self.frame_draw.canvas.bind("<B1-Motion>", self.paint)
 
-        self.frame_draw.erase_button = tk.Button(self.frame_draw.root, text="Erase", command=self.clear_canvas)
-        self.frame_draw.erase_button.pack(side="left")
+        erase_button = tk.Button(self.frame_draw, text="Erase", command=self.clear_canvas)
+        erase_button.grid(row=2, column=0, sticky="se")
 
-        self.frame_draw.exit_button = tk.Button(self.frame_draw.root, text="Exit", command=self.exit_application)
-        self.frame_draw.exit_button.pack(side="left")
-
-        self.frame_draw.save_button = tk.Button(self.frame_draw.root, text="Save Deltas", command=self.save_deltas)
-        self.frame_draw.save_button.pack(side="left")
-
-        self.frame_draw.next_button = tk.Button(self.frame_draw.root, text="Next", command=self.next_frame)
-        self.frame_draw.next_button.pack(side="left")
+        save_button = tk.Button(self.frame_draw, text="Save Deltas", command=self.save_deltas)
+        save_button.grid(row=2, column=1,sticky="se")
 
     # button Implementation!!!!!!
     def frame_rdp_init(self):
-        self.frame_rdp.root = tk.LabelFrame(self.root, text="Drawing after RDP")
-        self.frame_rdp.root.pack()
+        label_frame = tk.LabelFrame(self.frame_rdp, text="Drawing after RDP")
+        label_frame.grid(row=0, column=0, sticky="ew")
 
-        self.frame_rdp.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
-        self.frame_rdp.canvas.pack()
+        canvas = tk.Canvas(label_frame, width=256, height=256, bg="white")
+        canvas.grid(row=1, column=0, columnspan=2)
 
-        self.frame_rdp.next_button = tk.Button(self.frame_rdp.root, text="Next", command=self.next_frame)
-        self.frame_rdp.next_button.pack(side="left")
+        #exit_button = tk.Button(label_frame, text="Exit", command=self.exit_application)
+        #exit_button.grid(row=2, column=0)
 
-        self.frame_rdp.exit_button = tk.Button(self.frame_rdp.root, text="Exit", command=self.exit_application)
-        self.frame_rdp.exit_button.pack(side="left")
-
-        self.load_and_reconstruct(current_frame=self.frame_rdp, filename=self.rdp_file_name)
-
-    # button Implementation!!!!!!
+    # Initialize for AI drawing
     def frame_ai_init(self):
-        self.frame_ai.root = tk.LabelFrame(self.root, text="Drawing after AI")
-        self.frame_ai.root.pack()
+        label_frame = tk.LabelFrame(self.frame_ai, text="Drawing after AI")
+        label_frame.grid(row=0, column=0, sticky="ew")
 
-        self.frame_ai.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
-        self.frame_ai.canvas.pack()
+        canvas = tk.Canvas(label_frame, width=256, height=256, bg="white")
+        canvas.grid(row=1, column=0, columnspan=2)
 
-        self.frame_ai.next_button = tk.Button(self.frame_ai.root, text="Next", command=self.next_frame)
-        self.frame_ai.next_button.pack(side="left")
-
-        self.frame_ai.exit_button = tk.Button(self.frame_ai.root, text="Exit", command=self.exit_application)
-        self.frame_ai.exit_button.pack(side="left")
-
-        self.load_and_reconstruct(current_frame=self.frame_ai, filename=self.ai_file_name)
+        #exit_button = tk.Button(label_frame, text="Exit", command=self.exit_application)
+        #exit_button.grid(row=2, column=0)
 
     # load npy file and draw
     def load_and_reconstruct(self, current_frame, filename='mouse_deltas.npy'):
@@ -144,9 +136,13 @@ class MousePainter:
     def run(self):
         self.root.mainloop()
 
-    # called with the button next in every frame
-    def next_frame(self):
+    # called with the button erase in frame_draw
+    def clear_canvas(self):
+        # Delete all items drawn on the canvas
+        self.frame_draw.canvas.delete("all")
 
+    # called with next_button
+    def next_application(self):
         pass
         # Hide the current frame
         #self.frames[self.current_frame_index].pack_forget()
@@ -156,14 +152,21 @@ class MousePainter:
         # Show the next frame
         #self.frames[self.current_frame_index].pack()
 
-    # called with the button erase in frame_draw
-    def clear_canvas(self):
-        # Delete all items drawn on the canvas
-        self.frame_draw.canvas.delete("all")
+    def save_application(self):
+        pass
 
     # called with the button exit in every frame
     def exit_application(self):
         self.root.quit()
+
+    # initialize last_x, last_y, is_pressed, deltas
+    def init_drawing_vars(self):
+        # initialize all drawings
+        self.last_x = 0
+        self.last_y = 0
+        self.is_pressed = False
+        self.deltas = []
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
