@@ -16,4 +16,7 @@ if __name__ == "__main__":
     d_coords = painter.deltas
     print(d_coords)
 
-    reconstructor = rr.ReconstructorRDP(args)
+    painter.canvas_draw_init()
+    painter.run()
+
+

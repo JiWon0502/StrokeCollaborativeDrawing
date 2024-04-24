@@ -4,73 +4,85 @@ import argparse
 
 class MousePainter:
     def __init__(self, args):
-        self.root = None
+        self.root = tk.Tk()
+        # drawing frame, RDP frame, AI frame
+        self.frame_draw = tk.Frame(self.root)
+        self.frame_RDP = tk.Frame(self.root)
+        self.frame_AI = tk.Frame(self.root)
         # --savefile_name to change the name of the stroke npy file
-        self.save_file_name = args.savefile_name
+        self.save_file_name = 'mouse_deltas.npy'
+        self.rdp_file_name = 'rdp_deltas.npy'
+        self.ai_file_name = 'ai_deltas.npy'
 
         self.last_x = 0
         self.last_y = 0
-
         self.is_pressed = False
 
         # ( dx, dy, penstate )
         self.deltas = []
 
         # initialize canvas
-        self.canvas_draw_init()
+        self.frame_draw_init()
+        self.frame_RDP_init()
+        self.frame_AI_init()
 
-    # Initialize for stroke drawing
-    def canvas_draw_init(self):
-        self.root = tk.Tk()
-        self.root.title("Drawing with Mouse")
-
+    # initialize last_x, last_y, is_pressed, deltas
+    def init_drawing_vars(self):
         # initialize all drawings
         self.last_x = 0
         self.last_y = 0
         self.is_pressed = False
         self.deltas = []
 
-        self.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
-        self.canvas.pack()
+    # Initialize for stroke drawing
+    # button !!!!!!
+    def frame_draw_init(self):
+        self.frame_draw.root = self.root
+        self.frame_draw.root.title("Drawing with Mouse")
 
-        self.canvas.bind("<Button-1>", self.start_paint)
-        self.canvas.bind("<ButtonRelease-1>", self.stop_paint)
-        self.canvas.bind("<B1-Motion>", self.paint)
+        self.frame_draw.canvas = tk.Canvas(self.frame_draw.root, width=256, height=256, bg="white")
+        self.frame_draw.canvas.pack()
 
-        self.erase_button = tk.Button(self.root, text="Erase", command=self.canvas_draw_init)
-        self.erase_button.pack(side="left")
+        self.frame_draw.canvas.bind("<Button-1>", self.start_paint)
+        self.frame_draw.canvas.bind("<ButtonRelease-1>", self.stop_paint)
+        self.frame_draw.canvas.bind("<B1-Motion>", self.paint)
 
-        self.exit_button = tk.Button(self.root, text="Exit", command=self.exit_application)
-        self.exit_button.pack(side="left")
+        self.frame_draw.erase_button = tk.Button(self.frame_draw.root, text="Erase", command=self.init_drawing_vars)
+        self.frame_draw.erase_button.pack(side="left")
 
-        self.save_button = tk.Button(self.root, text="Save Deltas", command=self.save_deltas)
-        self.save_button.pack(side="left")
+        self.frame_draw.exit_button = tk.Button(self.frame_draw.root, text="Exit", command=self.exit_application)
+        self.frame_draw.exit_button.pack(side="left")
 
-    # Use deltas[] if it's length > 0. Or load the saved data.
-    def get_data(self):
-        if len(self.deltas) > 0 :
-            data = self.deltas
-        else :
-            data = np.load(self.save_file_name)
-        return data
+        self.frame_draw.save_button = tk.Button(self.frame_draw.root, text="Save Deltas", command=self.save_deltas)
+        self.frame_draw.save_button.pack(side="left")
 
-    def canvas_reconstruct_init(self):
-        self.root = tk.Tk()
-        self.root.title("Reconstruct Drawing")
+    # button Implementation!!!!!!
+    def frame_RDP_init(self):
+        self.frame_RDP.root = self.root
+        self.frame_RDP.root.title("Drawing after RDP")
 
-        self.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
-        self.canvas.pack()
+        self.frame_RDP.canvas = tk.Canvas(self.frame_RDP.root, width=256, height=256, bg="white")
+        self.frame_RDP.canvas.pack()
+
+        self.frame_RDP.next_button = tk.Button(self.frame_RDP.root, text="Next", command=self.init_drawing_vars)
+        self.frame_RDP.next_button.pack(side="left")
+
+        self.frame_RDP.exit_button = tk.Button(self.frame_RDP.root, text="Exit", command=self.exit_application)
+        self.frame_RDP.exit_button.pack(side="left")
 
         self.load_and_reconstruct()
 
-    def load_and_reconstruct(self):
+    # load npy file and draw
+    def load_and_reconstruct(self, filename='mouse_deltas.npy'):
         try:
-            data = self.get_data()
-            self.reconstruct_drawing(data)
+            self.deltas = np.load(filename)
+            self.reconstruct_drawing()
         except FileNotFoundError:
             print("No saved data file found.")
 
-    def reconstruct_drawing(self, data):
+
+    def reconstruct_drawing(self, framename=''):
+        data = self.deltas
         if len(data) == 0:
             print("No input data.")
             return
@@ -80,9 +92,6 @@ class MousePainter:
             x2, y2, pen_state2 = data[i + 1]
             if pen_state1 == 0:
                 self.canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
-
-    def exit_application(self):
-        self.root.quit()
 
     def start_paint(self, event):
         dx = event.x - self.last_x
@@ -108,6 +117,9 @@ class MousePainter:
 
     def run(self):
         self.root.mainloop()
+
+    def exit_application(self):
+        self.root.quit()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
