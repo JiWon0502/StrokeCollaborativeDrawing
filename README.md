@@ -1,4 +1,4 @@
-# Project Name
+# Stroke-based Collaborative Drawing between AI and Human
 
 ## Description
 
