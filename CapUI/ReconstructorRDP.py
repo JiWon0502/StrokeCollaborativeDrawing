@@ -4,14 +4,14 @@ import argparse
 
 class ReconstructorRDP:
     def __init__(self, args):
-        self.root = tk.Tk()
-        self.root.title("Reconstruct Drawing")
-
+        self.root = None
         self.data_name = args.data_name
-
         self.canvas_init()
 
     def canvas_init(self):
+        self.root = tk.Tk()
+        self.root.title("Reconstruct Drawing")
+
         self.canvas = tk.Canvas(self.root, width=256, height=256, bg="white")
         self.canvas.pack()
 
