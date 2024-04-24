@@ -13,10 +13,4 @@ if __name__ == "__main__":
     painter = mp.MousePainter(args)
     painter.run()
 
-    d_coords = painter.deltas
-    print(d_coords)
-
-    painter.canvas_draw_init()
-    painter.run()
-
 

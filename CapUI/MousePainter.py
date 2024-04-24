@@ -34,7 +34,6 @@ class MousePainter:
         self.create_buttons()
         self.init_drawing_vars()
 
-
     # Initialize the buttons
     def create_buttons(self):
         # Create buttons
@@ -143,14 +142,15 @@ class MousePainter:
 
     # called with next_button
     def next_application(self):
-        pass
-        # Hide the current frame
-        #self.frames[self.current_frame_index].pack_forget()
-        # Move to the next frame
+        print(self.current_frame_index, self.frames[self.current_frame_index])
+        #
+        if self.current_frame_index == 0:
+            pass
+        elif self.current_frame_index == 1:
+            pass
+        else :
+            pass
         self.current_frame_index = (self.current_frame_index + 1) % len(self.frames)
-        print(self.frames[self.current_frame_index])
-        # Show the next frame
-        #self.frames[self.current_frame_index].pack()
 
     def save_application(self):
         pass
