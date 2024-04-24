@@ -11,8 +11,8 @@ class MousePainter:
         self.frame_rdp = tk.Frame(self.root)
         self.frame_ai = tk.Frame(self.root)
 
-        #self.current_frame_index = 0
-        #self.frames = [self.frame_draw, self.frame_rdp, self.frame_ai]
+        self.current_frame_index = 0
+        self.frames = [self.frame_draw, self.frame_rdp, self.frame_ai]
 
         # --savefile_name to change the name of the stroke npy file
         self.save_file_name = args.save_file_name
@@ -146,11 +146,13 @@ class MousePainter:
 
     # called with the button next in every frame
     def next_frame(self):
+
         pass
         # Hide the current frame
         #self.frames[self.current_frame_index].pack_forget()
         # Move to the next frame
-        #self.current_frame_index = (self.current_frame_index + 1) % len(self.frames)
+        self.current_frame_index = (self.current_frame_index + 1) % len(self.frames)
+        print(self.frames[self.current_frame_index])
         # Show the next frame
         #self.frames[self.current_frame_index].pack()
 
