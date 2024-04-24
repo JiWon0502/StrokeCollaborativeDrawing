@@ -1,24 +1,19 @@
-# demo_1st
+# Project Name
 
+## Description
 
-Image Completion Model : Lmser-pix2seq: Learning Stable Sketch Representations For Sketch Healing
-@article{li2024lmser,
-  title={Lmser-pix2seq: Learning stable sketch representations for sketch healing},
-  author={Li, Tengjie and Zang, Sicong and Tu, Shikui and Xu, Lei},
-  journal={Computer Vision and Image Understanding},
-  pages={103931},
-  year={2024},
-  publisher={Elsevier}
-}
+This repository contains implementations of two image processing techniques:
 
-Image Simplication (RDP) : Hügel, S. (2021). Simplification (Version X.Y.Z) [Computer software]. https://doi.org/10.5281/zenodo.5774852
-@software{Hugel_Simplification_2021,
-author = {Hügel, Stephan},
-doi = {10.5281/zenodo.5774852},
-license = {MIT},
-month = {12},
-title = {{Simplification}},
-url = {https://github.com/urschrei/simplification},
-version = {X.Y.Z},
-year = {2021}
-}
+1. **Image Completion Model (Lmser-pix2seq)**: A method for learning stable sketch representations for sketch healing. For more details, refer to the following publication:
+
+   - Li, Tengjie, Sicong Zang, Shikui Tu, and Lei Xu. "Lmser-pix2seq: Learning stable sketch representations for sketch healing." *Computer Vision and Image Understanding* (2024): 103931. [Link to paper](link_to_paper)
+
+2. **Image Simplification (RDP)**: This technique utilizes the Ramer-Douglas-Peucker algorithm for image simplification. The software is available at:
+
+   - Hügel, S. (2021). Simplification (Version X.Y.Z) [Computer software]. [Link to software](https://github.com/urschrei/simplification). DOI: [10.5281/zenodo.5774852](https://doi.org/10.5281/zenodo.5774852).
+
+## References
+
+- Li, Tengjie, Sicong Zang, Shikui Tu, and Lei Xu. "Lmser-pix2seq: Learning stable sketch representations for sketch healing." *Computer Vision and Image Understanding* (2024): 103931. [Link to paper](link_to_paper)
+
+- Hügel, S. (2021). Simplification (Version X.Y.Z) [Computer software]. [Link to software](https://github.com/urschrei/simplification). DOI: [10.5281/zenodo.5774852](https://doi.org/10.5281/zenodo.5774852).
