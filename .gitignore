@@ -6,3 +6,5 @@ __pycache__/
 *.npy
 *.zip
 *.npz
+*.idea
+*.iml
