@@ -23,7 +23,7 @@ This repository contains implementations of two image processing techniques:
 
    - Li, Tengjie, Sicong Zang, Shikui Tu, and Lei Xu. "Lmser-pix2seq: Learning stable sketch representations for sketch healing." *Computer Vision and Image Understanding* (2024): 103931. [Link to paper](link_to_paper)
 
-2. ** RDP algorithm : This technique utilizes the Ramer-Douglas-Peucker algorithm for stroke simplification.
+2. **RDP algorithm** : This technique utilizes the Ramer-Douglas-Peucker algorithm for stroke simplification.
 
    - [RDP Documentation](https://rdp.readthedocs.io/en/latest/) © Copyright 2016, Fabian Hirschmann. Revision 715a436f.
 
