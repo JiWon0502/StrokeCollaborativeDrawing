@@ -23,12 +23,22 @@ This repository contains implementations of two image processing techniques:
 
    - Li, Tengjie, Sicong Zang, Shikui Tu, and Lei Xu. "Lmser-pix2seq: Learning stable sketch representations for sketch healing." *Computer Vision and Image Understanding* (2024): 103931. [Link to paper](link_to_paper)
 
-2. **Image Simplification (RDP)**: This technique utilizes the Ramer-Douglas-Peucker algorithm for image simplification. The software is available at:
+2. ** RDP algorithm : This technique utilizes the Ramer-Douglas-Peucker algorithm for stroke simplification.
 
-   - Hügel, S. (2021). Simplification (Version X.Y.Z) [Computer software]. [Link to software](https://github.com/urschrei/simplification). DOI: [10.5281/zenodo.5774852](https://doi.org/10.5281/zenodo.5774852).
+   - https://rdp.readthedocs.io/en/latest/# © Copyright 2016, Fabian Hirschmann. Revision 715a436f.
 
 ## References
+- @ARTICLE{sketchrnn,
+  author          = {{Ha}, David and {Eck}, Douglas},
+  title           = "{A Neural Representation of Sketch Drawings}",
+  journal         = {ArXiv e-prints},
+  archivePrefix   = "arXiv",
+  eprinttype      = {arxiv},
+  eprint          = {1704.03477},
+  primaryClass    = "cs.NE",
+  keywords        = {Computer Science - Neural and Evolutionary Computing, Computer Science - Learning, Statistics - Machine Learning},
+  year            = 2017,
+  month           = apr,
+}
 
 - Li, Tengjie, Sicong Zang, Shikui Tu, and Lei Xu. "Lmser-pix2seq: Learning stable sketch representations for sketch healing." *Computer Vision and Image Understanding* (2024): 103931. [Link to paper](link_to_paper)
-
-- Hügel, S. (2021). Simplification (Version X.Y.Z) [Computer software]. [Link to software](https://github.com/urschrei/simplification). DOI: [10.5281/zenodo.5774852](https://doi.org/10.5281/zenodo.5774852).
