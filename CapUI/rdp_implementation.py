@@ -7,7 +7,7 @@ from rdp_tmp import rdp
 def rdp_implementation(data_file_name, save_file_name):
     data = np.load(data_file_name, allow_pickle=True, encoding='latin1')
     for dx, dy, penstate in data:
-
+        pass
     pass
 
 if __name__ == "__main__":
