@@ -34,12 +34,6 @@ class ReconstructorRDP:
                 self.canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
 
 
-    def load_and_reconstruct_from_file(self):
-        try:
-            data = np.load(self.data_name)
-            self.reconstruct_drawing(data)
-        except FileNotFoundError:
-            print("No saved data file found.")
 
     def run(self):
         self.root.mainloop()
