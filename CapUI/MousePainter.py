@@ -1,6 +1,7 @@
 import tkinter as tk
 import numpy as np
 import argparse
+from utils import misc
 import sys
 class MousePainter:
     def __init__(self, args):
@@ -161,7 +162,7 @@ class MousePainter:
 
     # called with the button in frame_draw
     def save_deltas(self):
-        np.save( self.save_file_name, np.array(self.deltas_draw))
+        np.save(self.save_file_name, np.array(self.deltas_draw))
 
     # run while self.running == True
     def run(self):
@@ -185,7 +186,9 @@ class MousePainter:
         self.root.quit()
 
     def save_application(self):
-
+        misc.save_with_indexed_directory("results",self.save_index, self.save_file_name, self.deltas_draw)
+        misc.save_with_indexed_directory("results", self.save_index, self.rdp_file_name, self.deltas_rdp)
+        misc.save_with_indexed_directory("results", self.save_index, self.ai_file_name, self.deltas_ai)
         self.save_index = self.save_index + 1
 
     # called with the button exit in every frame
