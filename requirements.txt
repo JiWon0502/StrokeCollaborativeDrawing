@@ -1,0 +1,10 @@
+#Not updated list for lmser, used just for CapUI
+Pillow
+matplotlib
+numpy
+#tkinter usually installed with python
+torch
+torchvision
+opencv-python
+simplification
+pytest

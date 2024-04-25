@@ -1,4 +1,19 @@
-# Project Name
+# Stroke-based Collaborative Drawing between AI and Human
+
+## Installation
+
+Create virtual environement
+with pip
+
+```bash
+pip install -r requirements.txt
+```
+or conda
+
+```bash
+conda env create -f conda_requirements.yaml
+````
+
 
 ## Description
 
