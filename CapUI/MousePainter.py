@@ -4,11 +4,14 @@ import argparse
 
 class MousePainter:
     def __init__(self, args):
+        self.running = True
+        self.exit = False
+        self.save_index = 0
+
+        # tkinter initialize
         self.root = tk.Tk()
         # Set the title of the window
         self.root.title("Stroke-based Collaborative Drawing of AI and Human")
-        self.running = True
-        self.exit = False
 
         # drawing frame, RDP frame, AI frame
         self.frame_draw = tk.Frame(self.root)
@@ -20,9 +23,6 @@ class MousePainter:
         self.frame_rdp.grid(row=0, column=1, sticky="new")
         self.frame_ai.grid(row=0, column=2, sticky="new")
 
-        self.current_frame_index = 0
-        self.frames = [self.frame_draw, self.frame_rdp, self.frame_ai]
-
         # --savefile_name to change the name of the stroke npy file
         self.save_file_name = args.save_file_name
         self.rdp_file_name = args.rdp_file_name
@@ -33,8 +33,21 @@ class MousePainter:
         self.frame_rdp_init()
         self.frame_ai_init()
 
+        self.current_frame_index = 0
+        self.frames = [self.frame_draw, self.frame_rdp, self.frame_ai]
+
         self.create_buttons()
         self.init_drawing_vars()
+
+    # initialize last_x, last_y, is_pressed, deltas
+    def init_drawing_vars(self):
+        # initialize all drawings
+        self.last_x = 0
+        self.last_y = 0
+        self.is_pressed = False
+        self.deltas_draw = []
+        self.deltas_rdp = []
+        self.deltas_ai = []
 
     # Initialize the buttons
     def create_buttons(self):
@@ -68,61 +81,77 @@ class MousePainter:
 
     # button Implementation!!!!!!
     def frame_rdp_init(self):
-        label_frame = tk.LabelFrame(self.frame_rdp, text="Drawing after RDP")
-        label_frame.grid(row=0, column=0, sticky="ew")
+        self.frame_rdp.label_frame = tk.LabelFrame(self.frame_rdp, text="Drawing after RDP")
+        self.frame_rdp.label_frame.grid(row=0, column=0, sticky="nsew")
 
-        canvas = tk.Canvas(label_frame, width=256, height=256, bg="white")
-        canvas.grid(row=1, column=0, columnspan=2)
-
-        #exit_button = tk.Button(label_frame, text="Exit", command=self.exit_application)
-        #exit_button.grid(row=2, column=0)
+        self.frame_rdp.canvas = tk.Canvas(self.frame_rdp.label_frame, width=256, height=256, bg="white")
+        self.frame_rdp.canvas.grid(row=1, column=0, sticky="nsew")
 
     # Initialize for AI drawing
     def frame_ai_init(self):
-        label_frame = tk.LabelFrame(self.frame_ai, text="Drawing after AI")
-        label_frame.grid(row=0, column=0, sticky="ew")
+        self.frame_ai.label_frame = tk.LabelFrame(self.frame_ai, text="Drawing after RDP")
+        self.frame_ai.label_frame.grid(row=0, column=0, sticky="nsew")
 
-        canvas = tk.Canvas(label_frame, width=256, height=256, bg="white")
-        canvas.grid(row=1, column=0, columnspan=2)
-
-        #exit_button = tk.Button(label_frame, text="Exit", command=self.exit_application)
-        #exit_button.grid(row=2, column=0)
+        self.frame_ai.canvas = tk.Canvas(self.frame_ai.label_frame, width=256, height=256, bg="white")
+        self.frame_ai.canvas.grid(row=1, column=0, sticky="nsew")
 
     # load npy file and draw
-    def load_and_reconstruct(self, current_frame, filename='mouse_deltas.npy'):
+    def load_and_reconstruct(self, filename='mouse_deltas.npy'):
         try:
-            self.deltas = np.load(filename)
-            self.reconstruct_drawing(current_frame)
+            if self.current_frame_index == 0:
+                self.deltas_draw = np.load(filename, allow_pickle=True, encoding='latin1')
+                if self.deltas_draw is not None:
+                    self.reconstruct_drawing(self.frame_draw.canvas)
+            elif self.current_frame_index == 1:
+                self.deltas_rdp = np.load(filename, allow_pickle=True, encoding='latin1')
+                if self.deltas_rdp is not None:
+                    self.reconstruct_drawing(self.frame_rdp.canvas)
+            else:
+                self.deltas_ai = np.load(filename, allow_pickle=True, encoding='latin1')
+                if self.deltas_ai is not None:
+                    self.reconstruct_drawing(self.frame_ai.canvas)
         except FileNotFoundError:
             print("No saved data file found.")
 
+    # paint with a mouse
     def paint(self, event):
         x, y = event.x, event.y
         dx = x - self.last_x
         dy = y - self.last_y
-        self.deltas.append((dx, dy, not self.is_pressed))
+        self.deltas_draw.append((dx, dy, not self.is_pressed))
         if self.is_pressed:
             self.frame_draw.canvas.create_line((self.last_x, self.last_y, x, y), fill="black", width=2)
         self.last_x, self.last_y = x, y
 
     # called from load_and_reconstruct function
-    def reconstruct_drawing(self, current_frame):
-        data = self.deltas
-        if len(data) == 0:
+    def reconstruct_drawing(self, canvas=None):
+        canvas.delete("all")
+        if self.current_frame_index == 0:
+            deltas = self.deltas_draw
+        elif self.current_frame_index == 1:
+            deltas = self.deltas_rdp
+        else :
+            deltas = self.deltas_ai
+        if len(deltas) == 0:
             print("No input data.")
             return
+        start_x = start_y = current_x = current_y = 0
+        for dx, dy, mouse_button_pressed in deltas:
+            # Update current coordinates
+            current_x += dx
+            current_y += dy
 
-        for i in range(len(data) - 1):
-            x1, y1, pen_state1 = data[i]
-            x2, y2, pen_state2 = data[i + 1]
-            if pen_state1 == 0:
-                current_frame.root.create_line(x1, y1, x2, y2, fill="black", width=2)
+            # If the mouse button was pressed, draw a line
+            if not mouse_button_pressed:
+                canvas.create_line(start_x, start_y, current_x, current_y, fill="black", width=2)
+
+            start_x, start_y = current_x, current_y
 
     # called from paint function
     def start_paint(self, event):
         dx = event.x - self.last_x
         dy = event.y - self.last_y
-        self.deltas.append((dx, dy, not self.is_pressed))
+        self.deltas_draw.append((dx, dy, not self.is_pressed))
         self.last_x, self.last_y = event.x, event.y
         self.is_pressed = True
 
@@ -132,19 +161,18 @@ class MousePainter:
 
     # called with the button in frame_draw
     def save_deltas(self):
-        np.save( self.save_file_name, np.array(self.deltas))
+        np.save( self.save_file_name, np.array(self.deltas_draw))
 
     # run while self.running == True
     def run(self):
-        while self.running :
+        while self.running:
             self.root.mainloop()
-        else :
-            self.root.quit()
 
     # called with the button erase in frame_draw
     def clear_canvas(self):
         # Delete all items drawn on the canvas
         self.frame_draw.canvas.delete("all")
+        self.init_drawing_vars()
 
     # called with next_button -> stop the tkinter and return to main function
     def next_application(self):
@@ -152,24 +180,19 @@ class MousePainter:
         # self.current_frame_index == 0 : Mouse Drawing -> RDP
         # self.current_frame_index == 1 : RDP algorithm -> AI
         # self.current_frame_index == 2 : AI -> Mouse Drawing
-        self.running = False
         self.current_frame_index = (self.current_frame_index + 1) % len(self.frames)
+        self.running = False
+        self.root.quit()
 
     def save_application(self):
-        pass
+
+        self.save_index = self.save_index + 1
 
     # called with the button exit in every frame
     def exit_application(self):
         self.exit = True
         self.root.quit()
 
-    # initialize last_x, last_y, is_pressed, deltas
-    def init_drawing_vars(self):
-        # initialize all drawings
-        self.last_x = 0
-        self.last_y = 0
-        self.is_pressed = False
-        self.deltas = []
 
 
 if __name__ == "__main__":
