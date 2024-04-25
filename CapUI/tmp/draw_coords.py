@@ -20,7 +20,7 @@ def paint(event):
     last_x, last_y = x, y
 
 def save_coords():
-    np.save("mouse_coords.npy", np.array(coords))
+    np.save("../mouse_coords.npy", np.array(coords))
 
 def main():
     global root, canvas, coords, last_x, last_y, is_pressed

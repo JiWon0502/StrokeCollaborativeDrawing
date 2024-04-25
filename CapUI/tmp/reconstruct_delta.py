@@ -22,9 +22,9 @@ def load_and_reconstruct_drawing(canvas):
     try:
         canvas.delete("all")
         #deltas = np.load("mouse_deltas.npy")
-        deltas = np.load('mouse_deltas.npy')
-        deltas = np.load('rdp_deltas.npy')
-        deltas = np.load('ai_deltas.npy')
+        deltas = np.load('../mouse_deltas.npy')
+        deltas = np.load('../rdp_deltas.npy')
+        deltas = np.load('../ai_deltas.npy')
 
         reconstruct_drawing(canvas, deltas)
         #simplified = rdp_tmp.rdp(deltas, 2.0)

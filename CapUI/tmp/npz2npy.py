@@ -1,7 +1,7 @@
 import numpy as np
 
 # Load the .npz file
-data = np.load("../lmser/results/0.1/xyz/airplane/1.npz", encoding='latin1', allow_pickle=True)
+data = np.load("../../lmser/results/0.1/xyz/airplane/1.npz", encoding='latin1', allow_pickle=True)
 
 # List all the files stored in the .npz file
 print("Files in the .npz archive:", data.files)
@@ -31,4 +31,4 @@ rescaled_array = rescaled_data.astype(np.uint8)
 
 print("rescaled : ", rescaled_array)
 # Save the extracted array as a .npy file
-np.save('extracted_array.npy', rescaled_array)
+np.save('../extracted_array.npy', rescaled_array)

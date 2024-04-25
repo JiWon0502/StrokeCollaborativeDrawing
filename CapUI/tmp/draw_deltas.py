@@ -25,7 +25,7 @@ def paint(event):
     last_x, last_y = x, y
 
 def save_deltas():
-    np.save("mouse_deltas.npy", np.array(deltas))
+    np.save("../mouse_deltas.npy", np.array(deltas))
 
 # ndjson : positioned and scaled the data into a 256x256 region
 # 75K samples (70K Training, 2.5K Validation, 2.5K Test)
