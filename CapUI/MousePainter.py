@@ -1,7 +1,7 @@
 import tkinter as tk
 import numpy as np
 import argparse
-
+import sys
 class MousePainter:
     def __init__(self, args):
         self.running = True
@@ -191,9 +191,8 @@ class MousePainter:
     # called with the button exit in every frame
     def exit_application(self):
         self.exit = True
+        self.running = False
         self.root.quit()
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

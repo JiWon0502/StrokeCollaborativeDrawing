@@ -30,3 +30,4 @@ if __name__ == "__main__":
             painter.deltas_ai = painter.load_and_reconstruct(filename=painter.ai_file_name)
 
         painter.running = True
+    #print("Loop termination check")
