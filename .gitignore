@@ -6,3 +6,4 @@ lmser.zip
 __pycache__/
 *.pyc
 *.npy
+*.zip
