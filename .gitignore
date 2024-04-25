@@ -2,6 +2,7 @@ result/
 results/
 dataset/
 __pycache__/
+.idea/
 *.pyc
 *.npy
 *.zip
