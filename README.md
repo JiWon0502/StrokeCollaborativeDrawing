@@ -18,6 +18,7 @@ conda env create -f conda_requirements.yaml
 ## Description
 
 
+
 ## References
 
 1. **Image Completion Model (Lmser-pix2seq)**: A method for learning stable sketch representations for sketch healing. For more details, refer to the following publication:
