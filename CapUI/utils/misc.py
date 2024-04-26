@@ -18,7 +18,7 @@ append start_point_x, start_point_y, pen_state at first
 
 """
 todo
-1. npz2npy -> jiwon
+1. npz2npy랑 UI 그림 추가 안되는 부분 수정 -> jiwon
 2. stroke ordering
 3. rdp algorithm ->  *rdp_tmp.py 사용 가능, delta to coords도 가능
 4. npz stroke rescale
