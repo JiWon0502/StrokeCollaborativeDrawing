@@ -516,16 +516,10 @@ if __name__ == '__main__':
         catname = each_np_path.split("/")[-1].split(".")[0]
         os.makedirs(f"/root/human-study/human/{prob}/{catname}", exist_ok=True)
         dataset_np = np.load(each_np_path, encoding='latin1', allow_pickle=True)
-			 
         npz_ = dataset_np['test']
-										 
-					
-									
         for index, sample in enumerate(npz_):
-														
-					   
             gra, adj = make_graph(sample, graph_picture_size=64,
                                   mask_prob=prob, random_color=False, channel_3=False,
                                   save=f"/root/human-study/human/{prob}/{catname}/{index}.jpg")
             print(index)
-						 
+

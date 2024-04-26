@@ -3,12 +3,15 @@ import numpy as np
 import argparse
 from utils import misc
 import sys
+
+
 class MousePainter:
     def __init__(self, args):
         self.running = True
         self.exit = False
         self.save_index = 0
-
+        # number of strokes to generate
+        self.stroke_number = 3
         # tkinter initialize
         self.root = tk.Tk()
         # Set the title of the window
@@ -90,7 +93,7 @@ class MousePainter:
 
     # Initialize for AI drawing
     def frame_ai_init(self):
-        self.frame_ai.label_frame = tk.LabelFrame(self.frame_ai, text="Drawing after RDP")
+        self.frame_ai.label_frame = tk.LabelFrame(self.frame_ai, text="Drawing after AI")
         self.frame_ai.label_frame.grid(row=0, column=0, sticky="nsew")
 
         self.frame_ai.canvas = tk.Canvas(self.frame_ai.label_frame, width=256, height=256, bg="white")

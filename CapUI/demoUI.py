@@ -24,7 +24,7 @@ if __name__ == "__main__":
             print("wait for RDP")
             print(painter.rdp_file_name)
             painter.deltas_rdp = painter.load_and_reconstruct(filename=painter.rdp_file_name)
-        else :
+        else:
             print("wait for AI")
             print(painter.ai_file_name)
             painter.deltas_ai = painter.load_and_reconstruct(filename=painter.ai_file_name)

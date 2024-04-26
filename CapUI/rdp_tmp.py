@@ -159,7 +159,6 @@ def rdp(M, epsilon=0, dist=pldist, algo="iter", return_mask=False):
     :param return_mask: return mask instead of simplified array
     :type return_mask: bool
     """
-
     if algo == "iter":
         algo = partial(rdp_iter, return_mask=return_mask)
     elif algo == "rec":
