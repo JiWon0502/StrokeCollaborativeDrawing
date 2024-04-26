@@ -1,13 +1,17 @@
 import tkinter as tk
 import numpy as np
 import argparse
+from utils import misc
+import sys
+
 
 class MousePainter:
     def __init__(self, args):
         self.running = True
         self.exit = False
         self.save_index = 0
-
+        # number of strokes to generate
+        self.stroke_number = 3
         # tkinter initialize
         self.root = tk.Tk()
         # Set the title of the window
@@ -89,7 +93,7 @@ class MousePainter:
 
     # Initialize for AI drawing
     def frame_ai_init(self):
-        self.frame_ai.label_frame = tk.LabelFrame(self.frame_ai, text="Drawing after RDP")
+        self.frame_ai.label_frame = tk.LabelFrame(self.frame_ai, text="Drawing after AI")
         self.frame_ai.label_frame.grid(row=0, column=0, sticky="nsew")
 
         self.frame_ai.canvas = tk.Canvas(self.frame_ai.label_frame, width=256, height=256, bg="white")
@@ -161,7 +165,7 @@ class MousePainter:
 
     # called with the button in frame_draw
     def save_deltas(self):
-        np.save( self.save_file_name, np.array(self.deltas_draw))
+        np.save(self.save_file_name, np.array(self.deltas_draw))
 
     # run while self.running == True
     def run(self):
@@ -185,15 +189,16 @@ class MousePainter:
         self.root.quit()
 
     def save_application(self):
-
+        misc.save_with_indexed_directory("results",self.save_index, self.save_file_name, self.deltas_draw)
+        misc.save_with_indexed_directory("results", self.save_index, self.rdp_file_name, self.deltas_rdp)
+        misc.save_with_indexed_directory("results", self.save_index, self.ai_file_name, self.deltas_ai)
         self.save_index = self.save_index + 1
 
     # called with the button exit in every frame
     def exit_application(self):
         self.exit = True
+        self.running = False
         self.root.quit()
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

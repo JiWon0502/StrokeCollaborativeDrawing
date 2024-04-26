@@ -43,7 +43,6 @@ dependencies:
       - pytest==8.1.1
       - python-dateutil==2.9.0.post0
       - shapely==2.0.4
-      - simplification==0.7.10
       - six==1.16.0
       - sympy==1.12
       - tomli==2.0.1

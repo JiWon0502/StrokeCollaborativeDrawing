@@ -22,11 +22,24 @@ def load_and_reconstruct_drawing(canvas):
     try:
         canvas.delete("all")
         #deltas = np.load("mouse_deltas.npy")
-        deltas = np.load('mouse_deltas.npy')
-        deltas = np.load('rdp_deltas.npy')
-        deltas = np.load('ai_deltas.npy')
+        #deltas = np.load('../mouse_deltas.npy')
+        #deltas = np.load('../rdp_deltas.npy')
+        #deltas = np.load('../ai_deltas.npy')
+        deltas = np.load("/Users/yoonjiwon/PycharmProjects/demo_1st/CapUI/airplane.npz", encoding='latin1', allow_pickle=True)
+        print(deltas["test"][1])
+        deltas = deltas["test"][1]
 
-        reconstruct_drawing(canvas, deltas)
+        # Calculate the sum of each column
+        column_sums = np.sum(deltas, axis=0)
+
+        # Find the minimum and maximum sums for each column
+        min_column_sum = np.min(column_sums, axis=1)
+        max_column_sum = np.max(column_sums, axis=1)
+
+        print("Minimum sum for each column:", min_column_sum)
+        print("Maximum sum for each column:", max_column_sum)
+
+        #reconstruct_drawing(canvas, deltas)
         #simplified = rdp_tmp.rdp(deltas, 2.0)
 
     except FileNotFoundError:

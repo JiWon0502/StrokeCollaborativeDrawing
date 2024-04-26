@@ -1,8 +1,11 @@
-seed.npy
 result/
 results/
 dataset/
-lmser.zip
 __pycache__/
+.idea/
 *.pyc
 *.npy
+*.zip
+*.npz
+*.idea
+*.iml
