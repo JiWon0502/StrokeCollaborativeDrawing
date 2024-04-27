@@ -1,14 +1,24 @@
 # Stroke-based Collaborative Drawing between AI and Human
 
+Stroke-based Collaborative Drawing between AI and Human
+
+## This is the final version(s) of the code
+
 ## Installation
+Implemented using python==3.9.*
+
 
 Create virtual environement
-with pip
+
+using venv, pip
 
 ```bash
+python3.9 -m venv vSCD
+source vSCD/bin/activate
+
 pip install -r requirements.txt
 ```
-or conda
+or using conda
 
 ```bash
 conda env create -f conda_requirements.yaml
@@ -23,7 +33,7 @@ conda env create -f conda_requirements.yaml
 
 1. **Image Completion Model (Lmser-pix2seq)**: A method for learning stable sketch representations for sketch healing. For more details, refer to the following publication:
 
-   - Li, Tengjie, Sicong Zang, Shikui Tu, and Lei Xu. "Lmser-pix2seq: Learning stable sketch representations for sketch healing." *Computer Vision and Image Understanding* (2024): 103931. [Link to paper]([(https://github.com/CMACH508/Lmser-pix2seq])
+   - Li, Tengjie, Sicong Zang, Shikui Tu, and Lei Xu. "Lmser-pix2seq: Learning stable sketch representations for sketch healing." *Computer Vision and Image Understanding* (2024): 103931. [Link to paper](link_to_paper)
   
 
 2. **Image Simplification (RDP)**: This technique utilizes the Ramer-Douglas-Peucker algorithm for image simplification. The software is available at:
