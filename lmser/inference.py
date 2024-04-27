@@ -33,8 +33,14 @@ class SketchesDataset:
         for c in self.category:
             dataset = np.load(os.path.join(self.path, c), encoding='latin1', allow_pickle=True)
             tmp_sketches.append(dataset[self.mode])
+            # print(c, " : ", tmp_sketches)
             self.sketches_categroy_count.append(len(dataset[self.mode]))
+            # print("category count : ", self.sketches_categroy_count)
             print(f"dataset: {c} added.")
+        # all the input arrays must have same number of dimensions,
+        # but the array at index 0 has 3 dimension(s) and the array at index 1 has 1 dimension(s)
+        # for i, arr in enumerate(tmp_sketches):
+            # print(f"Dimensions of array {i + 1}: {arr.ndim}")
         data_sketches = np.concatenate(tmp_sketches)
         print(f"length of train set: {len(data_sketches)}")
 

@@ -3,16 +3,17 @@ import torch
 
 class HParams:
     def __init__(self):
-        self.data_location = './dataset/'#location of  of origin data
-        #self.category = ["airplane.npz"]
+        self.data_location = './dataset/' # location of origin data
+        # self.category = ["ex.npz"]
         self.category = ["airplane.npz", "angel.npz", "alarm clock.npz", "apple.npz",
                          "butterfly.npz", "belt.npz", "bus.npz",
                          "cake.npz", "cat.npz", "clock.npz", "eye.npz", "fish.npz",
                          "pig.npz", "sheep.npz", "spider.npz", "The Great Wall of China.npz",
                          "umbrella.npz"]
+
         self.model_save = "model_save"
         
-        self.dec_hidden_size = 512 #Recommended settings are 1024 and above
+        self.dec_hidden_size = 512 # Recommended settings are 1024 and above
         self.Nz = 128  # encoder output size
         self.M = 20 
         self.dropout = 0.0

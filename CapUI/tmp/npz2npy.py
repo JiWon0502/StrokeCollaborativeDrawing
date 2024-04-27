@@ -1,21 +1,41 @@
 import numpy as np
 
-def npz2npy(npz_filename):
+
+# npz file to npy array for original quickdraw dataset
+# only the first index
+def npz2npy_quickdraw(npz_filename):
+    data = np.load(npz_filename, encoding='latin1', allow_pickle=True)
+    extracted_data = data['test'][0]
+    print(extracted_data)
+    np.save('../npz2npy.npy', extracted_data)
+
+
+# npz file to npy array for original quickdraw dataset
+# all training data saved as {filename}_npz2npy_{index}.npy
+def npz2npy_quickdraw_full(npz_filename):
+    data = np.load(npz_filename, encoding='latin1', allow_pickle=True)
+    for i in range(data['test'].shape[0]):
+        extracted_data = data['test'][i]
+        print(extracted_data)
+        filename = '../{}_npz2npy_{}.npy'.format(npz_filename, i)
+        np.save(filename, extracted_data)
+
+# For output file of the AI model
+# npz file must have
+# 1. scaled with 256 * 256
+# 2. inserted (start_x, start_y, True)
+def npz2npy_output(npz_filename):
     # Load the .npz file
     data = np.load(npz_filename, encoding='latin1', allow_pickle=True)
-    if(data.keys() == {'test', 'train', 'valid'}):
-        print(data['test'].shape)
-        for i in range(data['test'].shape[0]):
-            print(data['test'][i])
-
     # List all the files stored in the .npz file
-    print("Files in the .npz archive:", data.files)
-
+    #print("Files in the .npz archive:", data.files)
+    #print("Files in the .npz archive:", extracted_data.files)
+    print("Files in the .npz archive", data.files)
     # Load each array from the .npz file
     x_array = data['x']
     y_array = data['y']
     z_array = data['z']
-
+    """
     # Rescale 'x' and 'y' arrays to the range 0 to 255
     x_min = x_array.min()
     x_max = x_array.max()
@@ -33,11 +53,14 @@ def npz2npy(npz_filename):
 
     # Convert the rescaled array to integers (0 to 255)
     rescaled_array = rescaled_data.astype(np.uint8)
-
-    print("rescaled : ", rescaled_array)
+    """
+    # print("rescaled : ", rescaled_array)
     # Save the extracted array as a .npy file
-    np.save('../npz2npy.npy', rescaled_array)
+    stacked_data = np.stack((x_array, y_array, z_array), axis=-1)
+    np.save('../npz2npy.npy', stacked_data)
+    print(stacked_data)
+
 
 if __name__ == "__main__":
     filename = input("Enter filename: ")
-    npz2npy(filename)
+    npz2npy_output(filename)

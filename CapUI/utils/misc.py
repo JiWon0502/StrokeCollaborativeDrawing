@@ -4,21 +4,24 @@ import numpy as np
 # npy file format
 """
 npy2npz.py function : converts npy to npz
+# hyper_params.py -> self.category = [npz_filename]으로 두고 inference.py 돌리면 돌아감
+ㄴ
 (start_point_x, start_point_y, pen_state=1)
 (dx, dy, pen_state) * 반복
 """
 
 """
-npz2npy.py : 
-convert npz to npy
-append start_point_x, start_point_y, pen_state at first
-
+convert npz to npy - misc.py에 저장
+1. def npz2npy_output(npz_filename, npy_filename) : ai model에서 나온 output 기반 Npy로 변환. (가정 : Scale, 시작 좌표 이미 다 계산됨)
+2. def npz2npy_quickdraw(npz_filename) : data['test'][0]에 있는 (dx, dy, penstate) "npz2npy.npy"로 저장
+3. def npz2npy_quickdraw_full(npz_filename): 2번에서 하는 걸 모든 index에 대해 실행. "{filename}_npz2npy_{index}.npy"로 저장
 """
 
+# append start_point_x, start_point_y, pen_state first...
 
 """
 todo
-1. npz2npy랑 UI 그림 추가 안되는 부분 수정 -> jiwon
+1. npz2npy, UI 그림 추가 안되는 부분 수정 (완)
 2. stroke ordering
 3. rdp algorithm ->  *rdp_tmp.py 사용 가능, delta to coords도 가능
 4. npz stroke rescale
@@ -91,3 +94,53 @@ def scale_sketch(sketch, size=(256, 256)):
         sketch_normalize = sketch / np.array([[w, w, 1]], dtype=float)
     sketch_rescale = sketch_normalize * np.array([[size[0], size[1], 1]], dtype=float)
     return sketch_rescale.astype("int16")
+
+
+# npz file to npy array for original quickdraw dataset
+# only the first index
+def npz2npy_quickdraw(npz_filename, npy_filename):
+    data = np.load(npz_filename, encoding='latin1', allow_pickle=True)
+    extracted_data = data['test'][0]
+    # print(extracted_data)
+    np.save('npy_filename', extracted_data)
+
+
+# npz file to npy array for original quickdraw dataset
+# all training data saved as {filename}_npz2npy_{index}.npy
+def npz2npy_quickdraw_full(npz_filename):
+    data = np.load(npz_filename, encoding='latin1', allow_pickle=True)
+    for i in range(data['test'].shape[0]):
+        extracted_data = data['test'][i]
+        # print(extracted_data)
+        filename = '../{}_npz2npy_{}.npy'.format(npz_filename, i)
+        np.save(filename, extracted_data)
+
+
+# For output file of the AI model
+# npz file must have
+# 1. scaled with 256 * 256
+# 2. inserted (start_x, start_y, True)
+def npz2npy_output(npz_filename):
+    # Load the .npz file
+    data = np.load(npz_filename, encoding='latin1', allow_pickle=True)
+    x_array = data['x']
+    y_array = data['y']
+    z_array = data['z']
+    stacked_data = np.stack((x_array, y_array, z_array), axis=-1)
+    np.save('../npz2npy.npy', stacked_data)
+    #print(stacked_data)
+
+
+# For input file of the AI model
+# hyper_params.py -> self.category = [npz_filename]으로 두고 inference.py 돌리면 돌아감
+# npy file (dx, dy, pen_state) to npz file ["test"][0] = [(dx, dy, pen_state)]
+def npy2npz(npy_filename, npz_filename):
+    data = np.load(npy_filename, encoding='latin1', allow_pickle=True)
+    npz_data = {"test": [], "train": [], "val": []}
+    data_tmp = np.empty(1, dtype=object)
+    data_tmp[0] = data
+    #reshaped_array = np.reshape(reshaped_array, (1,))
+    print(data_tmp.shape)
+    print(data_tmp[0].shape)
+    npz_data['test'] = data_tmp
+    np.savez_compressed(npz_filename, **npz_data)
