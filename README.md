@@ -2,7 +2,6 @@
 
 Stroke-based Collaborative Drawing between AI and Human
 
-## This is the final version(s) of the code
 
 ## Installation
 Implemented using python==3.9.*
