@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import rdp_image
 
 """
 def npy2npz(npy_filename, npz_filename) : converts npy to npz
@@ -22,7 +23,7 @@ convert npz to npy - misc.py에 저장
 todo
 1. npz2npy, UI 그림 추가 안되는 부분 수정 (완)
 2. stroke ordering
-3. rdp algorithm ->  *rdp_im.py 사용 가능, delta to coords도 가능
+3. rdp algorithm ->  *rdp_image.py 사용 가능, delta to coords도 가능
 4. npz stroke rescale
 5. evaluation : classification
 세윤 -> 2 + 4, 3 순서 
@@ -113,6 +114,26 @@ def coords_to_deltas(coords):
     # print("deltas, penstate, concat, coords[0]",dx_dy.shape, pen_states.shape, deltas.shape, arr_reshaped.shape)
     return result
 
+
+def rdp_final(data_file_name, save_file_name):
+    lines = rdp_image.extract_lines_from_npy(data_file_name)
+    deltas = None
+    for l in lines:
+        # print("line before rdp")
+        # print(l)
+        # print("rdp processed line")
+        # print(rdp_im.rdp(l, epsilon=0.5))
+        tmp = rdp_image.rdp(l, epsilon=2.0)
+        # print("coords : ", tmp)
+        # print("deltas : ", misc.coords_to_deltas(tmp))
+        if deltas is None:
+            deltas = coords_to_deltas(tmp)
+        else:
+            deltas = np.vstack((deltas, coords_to_deltas(tmp)))
+    deltas = np.array(deltas)
+    np.save(save_file_name, deltas)
+
+
 # ******************************************************************************** #
 # from here, Reference : inference_sketch_processing.py from Lmser-pix2seq model
 # ******************************************************s************************** #
@@ -155,3 +176,8 @@ def scale_sketch(sketch, size=(256, 256)):
         sketch_normalize = sketch / np.array([[w, w, 1]], dtype=float)
     sketch_rescale = sketch_normalize * np.array([[size[0], size[1], 1]], dtype=float)
     return sketch_rescale.astype("int16")
+
+
+if __name__ == "__main__":
+    # rdp.extract_lines_from_npy(args.data_file_name)
+    rdp_final(data_file_name='../mouse_deltas.npy', save_file_name='../rdp_deltas.npy')
