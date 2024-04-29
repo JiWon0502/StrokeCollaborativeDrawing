@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from . import rdpfunc
 
 """
 def npy2npz(npy_filename, npz_filename) : converts npy to npz
@@ -22,7 +23,7 @@ convert npz to npy - misc.py에 저장
 todo
 1. npz2npy, UI 그림 추가 안되는 부분 수정 (완)
 2. stroke ordering
-3. rdp algorithm ->  *rdp_im.py 사용 가능, delta to coords도 가능
+3. rdp algorithm ->  *rdpfunc.py 사용 가능, delta to coords도 가능
 4. npz stroke rescale
 5. evaluation : classification
 세윤 -> 2 + 4, 3 순서 
@@ -84,7 +85,7 @@ def npz2npy_output(npz_filename):
     z_array = data['z']
     stacked_data = np.stack((x_array, y_array, z_array), axis=-1)
     np.save('../npz2npy.npy', stacked_data)
-    #print(stacked_data)
+    # print(stacked_data)
 
 
 # For input file of the AI model
@@ -95,23 +96,54 @@ def npy2npz(npy_filename, npz_filename):
     npz_data = {"test": [], "train": [], "val": []}
     data_tmp = np.empty(1, dtype=object)
     data_tmp[0] = data
-    #reshaped_array = np.reshape(reshaped_array, (1,))
+    # reshaped_array = np.reshape(reshaped_array, (1,))
     print(data_tmp.shape)
     print(data_tmp[0].shape)
     npz_data['test'] = data_tmp
     np.savez_compressed(npz_filename, **npz_data)
 
-def coords_to_deltas(coords):
+
+def coords_to_deltas(coords, lastx, lasty):
+    # print("coords_to_deltas - coords shape : ", coords.shape)
     dx_dy = np.diff(coords, axis=0)
     pen_states = np.zeros((len(dx_dy), 1))
     deltas = np.hstack((dx_dy, pen_states))
     arr_reshaped = coords[0].reshape(1, -1)
+    arr_reshaped = arr_reshaped - np.array([lastx, lasty])
     arr_reshaped = np.hstack((arr_reshaped, np.array([[1]])))
-    # print(arr_reshaped)
+    # print("coords_to_deltas - reshaped array :", arr_reshaped)
     result = np.vstack((arr_reshaped, deltas)).astype(int)
-    # print(result.shape)
+    # print("coords_to_deltas - result shape : ", result.shape)
+    # print("coords_to_deltas - result : ", result)
     # print("deltas, penstate, concat, coords[0]",dx_dy.shape, pen_states.shape, deltas.shape, arr_reshaped.shape)
-    return result
+    lastx, lasty = coords[-1]
+    # print("last x, last y : ", lastx, lasty)
+    return result, lastx, lasty
+
+
+def rdp_final(data_file_name, save_file_name):
+    lines = rdpfunc.extract_lines_from_npy(data_file_name)
+    deltas = None
+    lastx, lasty = 0, 0
+    for l in lines:
+        # print("line before rdp")
+        # print(l)
+        # print("rdp processed line")
+        # print(rdpfunc.rdp(l, epsilon=0.5))
+        tmp = rdpfunc.rdp(l, epsilon=2.0)
+        # print("coords : ", tmp)
+        # print("deltas : ", misc.coords_to_deltas(tmp))
+        if deltas is None:
+            d_tmp, lastx, lasty = coords_to_deltas(tmp, lastx, lasty)
+            deltas = d_tmp
+        else:
+            d_tmp, lastx, lasty = coords_to_deltas(tmp, lastx, lasty)
+            deltas = np.vstack((deltas, d_tmp))
+    # print(deltas)
+    # print("how long is rdp processed deltas : ", deltas.__len__())
+    deltas = np.array(deltas)
+    np.save(save_file_name, deltas)
+
 
 # ******************************************************************************** #
 # from here, Reference : inference_sketch_processing.py from Lmser-pix2seq model
@@ -155,3 +187,8 @@ def scale_sketch(sketch, size=(256, 256)):
         sketch_normalize = sketch / np.array([[w, w, 1]], dtype=float)
     sketch_rescale = sketch_normalize * np.array([[size[0], size[1], 1]], dtype=float)
     return sketch_rescale.astype("int16")
+
+
+if __name__ == "__main__":
+    # rdp.extract_lines_from_npy(args.data_file_name)
+    rdp_final(data_file_name='../mouse_deltas.npy', save_file_name='../rdp_deltas.npy')
