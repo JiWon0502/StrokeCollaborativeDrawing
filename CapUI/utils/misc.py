@@ -23,11 +23,12 @@ convert npz to npy - misc.py에 저장
 todo
 1. npz2npy, UI 그림 추가 안되는 부분 수정 (완)
 2. stroke ordering
-3. rdp algorithm ->  *rdpfunc.py 사용 가능, delta to coords도 가능
+3. rdp algorithm (완)
 4. npz stroke rescale
 5. evaluation : classification
-세윤 -> 2 + 4, 3 순서 
-지민 -> 5, 3 순서
+세윤 -> 2 + 4
+지민 -> 5
+지원 1, 3
 """
 
 
