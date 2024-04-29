@@ -1,8 +1,6 @@
 import os
-
 import numpy as np
-
-import rdpfunc
+from . import rdpfunc
 
 """
 def npy2npz(npy_filename, npz_filename) : converts npy to npz
@@ -105,34 +103,44 @@ def npy2npz(npy_filename, npz_filename):
     np.savez_compressed(npz_filename, **npz_data)
 
 
-def coords_to_deltas(coords):
+def coords_to_deltas(coords, lastx, lasty):
+    # print("coords_to_deltas - coords shape : ", coords.shape)
     dx_dy = np.diff(coords, axis=0)
     pen_states = np.zeros((len(dx_dy), 1))
     deltas = np.hstack((dx_dy, pen_states))
     arr_reshaped = coords[0].reshape(1, -1)
+    arr_reshaped = arr_reshaped - np.array([lastx, lasty])
     arr_reshaped = np.hstack((arr_reshaped, np.array([[1]])))
-    # print(arr_reshaped)
+    # print("coords_to_deltas - reshaped array :", arr_reshaped)
     result = np.vstack((arr_reshaped, deltas)).astype(int)
-    # print(result.shape)
+    # print("coords_to_deltas - result shape : ", result.shape)
+    # print("coords_to_deltas - result : ", result)
     # print("deltas, penstate, concat, coords[0]",dx_dy.shape, pen_states.shape, deltas.shape, arr_reshaped.shape)
-    return result
+    lastx, lasty = coords[-1]
+    # print("last x, last y : ", lastx, lasty)
+    return result, lastx, lasty
 
 
 def rdp_final(data_file_name, save_file_name):
     lines = rdpfunc.extract_lines_from_npy(data_file_name)
     deltas = None
+    lastx, lasty = 0, 0
     for l in lines:
-        print("line before rdp")
-        print(l)
-        print("rdp processed line")
-        print(rdpfunc.rdp(l, epsilon=0.5))
+        # print("line before rdp")
+        # print(l)
+        # print("rdp processed line")
+        # print(rdpfunc.rdp(l, epsilon=0.5))
         tmp = rdpfunc.rdp(l, epsilon=2.0)
         # print("coords : ", tmp)
         # print("deltas : ", misc.coords_to_deltas(tmp))
         if deltas is None:
-            deltas = coords_to_deltas(tmp)
+            d_tmp, lastx, lasty = coords_to_deltas(tmp, lastx, lasty)
+            deltas = d_tmp
         else:
-            deltas = np.vstack((deltas, coords_to_deltas(tmp)))
+            d_tmp, lastx, lasty = coords_to_deltas(tmp, lastx, lasty)
+            deltas = np.vstack((deltas, d_tmp))
+    # print(deltas)
+    # print("how long is rdp processed deltas : ", deltas.__len__())
     deltas = np.array(deltas)
     np.save(save_file_name, deltas)
 

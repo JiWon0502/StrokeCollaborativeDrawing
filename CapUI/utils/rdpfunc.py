@@ -5,6 +5,7 @@ Python implementation of the Ramer-Douglas-Peucker algorithm.
 :copyright: 2014-2016 Fabian Hirschmann <fabian@hirschmann.email>
 :license: MIT, see LICENSE.txt for more details.
 """
+
 # from math import sqrt
 from functools import partial
 import numpy as np
@@ -177,30 +178,30 @@ def extract_lines_from_npy(npy_file):
     # Load the npy file
     data = np.load(npy_file, allow_pickle=True, encoding='latin1')
 
-    # Extract dx, dy, and penstate
+    # Extract dx, dy, and pen state
     dx = data[:, 0]
     dy = data[:, 1]
     x = np.cumsum(dx)
     y = np.cumsum(dy)
-    penstate = data[:, 2]
+    pen_state = data[:, 2]
 
     # Initialize an empty list to store lines
     lines = []
     current_line = []
 
     # Iterate through the data
-    for i in range(len(penstate)):
-        if penstate[i] == 1:  # Start of a new line
-            if current_line:  # If there's a current line, append it to lines
-                lines.append(np.array(current_line))
-                current_line = []  # Reset current_line
+    for i in range(len(pen_state)):
+        if pen_state[i] == 1 and current_line:
+            # At start of a new line, if there's a current line, append it to lines
+            lines.append(np.array(current_line))
+            current_line = []  # Reset current_line
         current_line.append([x[i], y[i]])  # Append coordinates to current line
 
-    # Append the last line if penstate ends with 1
+    # Append the last line
     if current_line:
         lines.append(np.array(current_line))
 
-    # num_ones = np.count_nonzero(penstate == 1)
+    # num_ones = np.count_nonzero(pen state == 1)
     # num_lines = lines.__len__()
 
     return lines

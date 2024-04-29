@@ -1,5 +1,4 @@
 import argparse
-
 import MousePainter as MP
 from utils.misc import rdp_final
 
