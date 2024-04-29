@@ -22,7 +22,7 @@ convert npz to npy - misc.py에 저장
 todo
 1. npz2npy, UI 그림 추가 안되는 부분 수정 (완)
 2. stroke ordering
-3. rdp algorithm ->  *rdp_tmp.py 사용 가능, delta to coords도 가능
+3. rdp algorithm ->  *rdp_im.py 사용 가능, delta to coords도 가능
 4. npz stroke rescale
 5. evaluation : classification
 세윤 -> 2 + 4, 3 순서 
@@ -101,6 +101,17 @@ def npy2npz(npy_filename, npz_filename):
     npz_data['test'] = data_tmp
     np.savez_compressed(npz_filename, **npz_data)
 
+def coords_to_deltas(coords):
+    dx_dy = np.diff(coords, axis=0)
+    pen_states = np.zeros((len(dx_dy), 1))
+    deltas = np.hstack((dx_dy, pen_states))
+    arr_reshaped = coords[0].reshape(1, -1)
+    arr_reshaped = np.hstack((arr_reshaped, np.array([[1]])))
+    # print(arr_reshaped)
+    result = np.vstack((arr_reshaped, deltas)).astype(int)
+    # print(result.shape)
+    # print("deltas, penstate, concat, coords[0]",dx_dy.shape, pen_states.shape, deltas.shape, arr_reshaped.shape)
+    return result
 
 # ******************************************************************************** #
 # from here, Reference : inference_sketch_processing.py from Lmser-pix2seq model
