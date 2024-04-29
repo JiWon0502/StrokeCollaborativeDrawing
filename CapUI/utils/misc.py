@@ -1,6 +1,8 @@
 import os
+
 import numpy as np
-import rdp_image
+
+import rdpfunc
 
 """
 def npy2npz(npy_filename, npz_filename) : converts npy to npz
@@ -23,7 +25,7 @@ convert npz to npy - misc.py에 저장
 todo
 1. npz2npy, UI 그림 추가 안되는 부분 수정 (완)
 2. stroke ordering
-3. rdp algorithm ->  *rdp_image.py 사용 가능, delta to coords도 가능
+3. rdp algorithm ->  *rdpfunc.py 사용 가능, delta to coords도 가능
 4. npz stroke rescale
 5. evaluation : classification
 세윤 -> 2 + 4, 3 순서 
@@ -85,7 +87,7 @@ def npz2npy_output(npz_filename):
     z_array = data['z']
     stacked_data = np.stack((x_array, y_array, z_array), axis=-1)
     np.save('../npz2npy.npy', stacked_data)
-    #print(stacked_data)
+    # print(stacked_data)
 
 
 # For input file of the AI model
@@ -96,11 +98,12 @@ def npy2npz(npy_filename, npz_filename):
     npz_data = {"test": [], "train": [], "val": []}
     data_tmp = np.empty(1, dtype=object)
     data_tmp[0] = data
-    #reshaped_array = np.reshape(reshaped_array, (1,))
+    # reshaped_array = np.reshape(reshaped_array, (1,))
     print(data_tmp.shape)
     print(data_tmp[0].shape)
     npz_data['test'] = data_tmp
     np.savez_compressed(npz_filename, **npz_data)
+
 
 def coords_to_deltas(coords):
     dx_dy = np.diff(coords, axis=0)
@@ -116,14 +119,14 @@ def coords_to_deltas(coords):
 
 
 def rdp_final(data_file_name, save_file_name):
-    lines = rdp_image.extract_lines_from_npy(data_file_name)
+    lines = rdpfunc.extract_lines_from_npy(data_file_name)
     deltas = None
     for l in lines:
-        # print("line before rdp")
-        # print(l)
-        # print("rdp processed line")
-        # print(rdp_im.rdp(l, epsilon=0.5))
-        tmp = rdp_image.rdp(l, epsilon=2.0)
+        print("line before rdp")
+        print(l)
+        print("rdp processed line")
+        print(rdpfunc.rdp(l, epsilon=0.5))
+        tmp = rdpfunc.rdp(l, epsilon=2.0)
         # print("coords : ", tmp)
         # print("deltas : ", misc.coords_to_deltas(tmp))
         if deltas is None:

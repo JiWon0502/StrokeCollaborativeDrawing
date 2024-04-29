@@ -1,7 +1,7 @@
 import argparse
 
 import MousePainter as MP
-from utils import misc
+from utils.misc import rdp_final
 
 parser = argparse.ArgumentParser()
 # Evaluation input filepaths
@@ -25,7 +25,7 @@ if __name__ == "__main__":
             #painter.deltas_draw = painter.load_and_reconstruct(filename=painter.save_file_name)
         elif painter.current_frame_index == 1:
             print("wait for RDP")
-            misc.rdp_final(painter.save_file_name, painter.rdp_file_name)
+            rdp_final(painter.save_file_name, painter.rdp_file_name)
             print(painter.rdp_file_name)
             painter.load_and_reconstruct(filename=painter.rdp_file_name)
             #painter.deltas_rdp = painter.load_and_reconstruct(filename=painter.rdp_file_name)

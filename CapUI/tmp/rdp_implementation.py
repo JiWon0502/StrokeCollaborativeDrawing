@@ -1,19 +1,19 @@
 import tkinter as tk
 import numpy as np
 import argparse
-import rdp_image
-import misc
+from utils.rdp_func import extract_lines_from_npy, rdp
+from utils import misc
 
 
 def rdp_implementation(data_file_name, save_file_name):
-    lines = rdp_image.extract_lines_from_npy(data_file_name)
+    lines = extract_lines_from_npy(data_file_name)
     deltas = None
     for l in lines:
         # print("line before rdp")
         # print(l)
         # print("rdp processed line")
         # print(rdp_im.rdp(l, epsilon=0.5))
-        tmp = rdp_image.rdp(l, epsilon=2.0)
+        tmp = rdp(l, epsilon=2.0)
         # print("coords : ", tmp)
         # print("deltas : ", misc.coords_to_deltas(tmp))
         if deltas is None:

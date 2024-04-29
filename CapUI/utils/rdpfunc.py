@@ -5,7 +5,7 @@ Python implementation of the Ramer-Douglas-Peucker algorithm.
 :copyright: 2014-2016 Fabian Hirschmann <fabian@hirschmann.email>
 :license: MIT, see LICENSE.txt for more details.
 """
-from math import sqrt
+# from math import sqrt
 from functools import partial
 import numpy as np
 
@@ -200,7 +200,7 @@ def extract_lines_from_npy(npy_file):
     if current_line:
         lines.append(np.array(current_line))
 
-    num_ones = np.count_nonzero(penstate == 1)
-    num_lines = lines.__len__()
+    # num_ones = np.count_nonzero(penstate == 1)
+    # num_lines = lines.__len__()
 
     return lines
