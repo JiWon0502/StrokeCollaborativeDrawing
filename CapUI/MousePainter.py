@@ -157,8 +157,8 @@ class MousePainter:
         self.deltas_draw.append((dx, dy, not self.is_pressed))
         if self.is_pressed:
             self.frame_draw.canvas.create_line((self.last_x, self.last_y, x, y), fill="black", width=2)
-        else:
-            print("from print function : last_x, last_y", self.last_x, self.last_y)
+        # else:
+            # print("from print function : last_x, last_y", self.last_x, self.last_y)
         self.last_x, self.last_y = x, y
 
     # called when mouse button first pressed
@@ -166,12 +166,12 @@ class MousePainter:
         if self.current_frame_index != 0:
             return
         # print("Type of arr:", type(self.deltas_draw))
-        print("start_paint function called")
+        # print("start_paint function called")
         dx = event.x - self.last_x
         dy = event.y - self.last_y
-        print("(last x, last y)", self.last_x, self.last_y)
-        print("(event x, event y)", event.x, event.y)
-        print("append", dx, dy, not self.is_pressed)
+        # print("(last x, last y)", self.last_x, self.last_y)
+        # print("(event x, event y)", event.x, event.y)
+        # print("append", dx, dy, not self.is_pressed)
         self.deltas_draw.append((dx, dy, not self.is_pressed))
         self.last_x, self.last_y = event.x, event.y
         self.is_pressed = True
@@ -180,7 +180,7 @@ class MousePainter:
     def stop_paint(self, event):
         if self.current_frame_index != 0:
             return
-        print("stop_paint function called,\n (last x, last y)", self.last_x, self.last_y)
+        # print("stop_paint function called,\n (last x, last y)", self.last_x, self.last_y)
         self.is_pressed = False
 
     # called with the button in frame_draw
