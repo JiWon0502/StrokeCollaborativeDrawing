@@ -5,7 +5,8 @@ class HParams:
     def __init__(self):
         self.data_location = './dataset/' # location of origin data
         # self.category = ["ex.npz"]
-        self.category = ["airplane.npz", "angel.npz", "alarm clock.npz", "apple.npz",
+        # "airplane.npz",
+        self.category = ["angel.npz", "alarm clock.npz", "apple.npz",
                          "butterfly.npz", "belt.npz", "bus.npz",
                          "cake.npz", "cat.npz", "clock.npz", "eye.npz", "fish.npz",
                          "pig.npz", "sheep.npz", "spider.npz", "The Great Wall of China.npz",

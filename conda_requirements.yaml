@@ -20,7 +20,6 @@ dependencies:
   - pip:
       - contourpy==1.2.1
       - cycler==0.12.1
-      - demo-1st==0.1
       - einops==0.4.1
       - exceptiongroup==1.2.1
       - filelock==3.13.3

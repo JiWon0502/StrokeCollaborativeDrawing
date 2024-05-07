@@ -5,7 +5,8 @@ Python implementation of the Ramer-Douglas-Peucker algorithm.
 :copyright: 2014-2016 Fabian Hirschmann <fabian@hirschmann.email>
 :license: MIT, see LICENSE.txt for more details.
 """
-from math import sqrt
+
+# from math import sqrt
 from functools import partial
 import numpy as np
 
@@ -169,4 +170,38 @@ def rdp(M, epsilon=0, dist=pldist, algo="iter", return_mask=False):
     if "numpy" in str(type(M)):
         return algo(M, epsilon, dist)
 
-    return algo(np.array(M), epsilon, dist).tolist()
+    return algo(np.array(M), epsilon, dist)
+    # return algo(np.array(M), epsilon, dist).tolist()
+
+
+def extract_lines_from_npy(npy_file):
+    # Load the npy file
+    data = np.load(npy_file, allow_pickle=True, encoding='latin1')
+
+    # Extract dx, dy, and pen state
+    dx = data[:, 0]
+    dy = data[:, 1]
+    x = np.cumsum(dx)
+    y = np.cumsum(dy)
+    pen_state = data[:, 2]
+
+    # Initialize an empty list to store lines
+    lines = []
+    current_line = []
+
+    # Iterate through the data
+    for i in range(len(pen_state)):
+        if pen_state[i] == 1 and current_line:
+            # At start of a new line, if there's a current line, append it to lines
+            lines.append(np.array(current_line))
+            current_line = []  # Reset current_line
+        current_line.append([x[i], y[i]])  # Append coordinates to current line
+
+    # Append the last line
+    if current_line:
+        lines.append(np.array(current_line))
+
+    # num_ones = np.count_nonzero(pen state == 1)
+    # num_lines = lines.__len__()
+
+    return lines
