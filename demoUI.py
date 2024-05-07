@@ -1,6 +1,6 @@
 import argparse
-import MousePainter as MP
-from utils import misc
+import CapUI.MousePainter as MP
+from CapUI.utils import misc
 
 parser = argparse.ArgumentParser()
 # Evaluation input filepaths
@@ -32,6 +32,8 @@ if __name__ == "__main__":
             # print("wait for AI")
             # print(painter.ai_file_name)
             misc.npy2npz(painter.rdp_file_name, painter.ai_file_name)
+
+
             painter.load_and_reconstruct(filename=painter.ai_file_name)
             # painter.deltas_ai = painter.load_and_reconstruct(filename=painter.ai_file_name)
 

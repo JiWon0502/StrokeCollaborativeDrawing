@@ -94,6 +94,10 @@ def npz2npy_output(npz_filename):
 # npy file (dx, dy, pen_state) to npz file ["test"][0] = [(dx, dy, pen_state)]
 def npy2npz(npy_filename, npz_filename):
     data = np.load(npy_filename, encoding='latin1', allow_pickle=True)
+    # Check if npz_filename ends with ".npy"
+    if npz_filename.endswith(".npy"):
+        # Replace ".npy" with ".npz"
+        npz_filename = os.path.splitext(npz_filename)[0] + ".npz"
     npz_data = {"test": [], "train": [], "val": []}
     data_tmp = np.empty(1, dtype=object)
     data_tmp[0] = data
