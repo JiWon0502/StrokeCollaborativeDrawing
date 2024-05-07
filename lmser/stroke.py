@@ -120,23 +120,24 @@ def xy2dxdy(xy):
 def run():
     p = 4  # number of maximum added strokes
     q = 4  # number of initial strokes
-    file_path = f"/Users/jungseyoon/Lmser-pix2seq/result/first/{a}.npz"  # 추가 first, second, ...
+
+    file_path = f"/Users/jungseyoon/Lmser-pix2seq/result/first/*.npz"  # 추가 first, second, ...
 
     if os.path.exists(file_path):  # 추가
         data = np.load(file_path, allow_pickle=True, encoding='latin1')  # 추가
         test_data = data['test']  # 추가
         np.savez('/Users/jungseyoon/Lmser-pix2seq/dataset/airplane.npz', test=test_data)  # 추가
 
-        # subprocess 모듈을 사용하여 Python 스크립트 실행
+        #  subprocess 모듈을 사용하여 Python 스크립트 실행
         subprocess.run(["python", "inference.py"])
 
-        # reshaped: 0.npz -> result.npz
+        #  reshaped: 0.npz -> result.npz
         result = np.load('/Users/jungseyoon/Lmser-pix2seq/results/0.0/xyz/airplane/0.npz')
         _npy_data = np.stack((result['x'], result['y'], result['z']), axis=1)
         reshaped = np.expand_dims(_npy_data, axis=0)
         np.savez('/Users/jungseyoon/Lmser-pix2seq/dataset/result.npz', test=reshaped)
 
-        # 스케일링 및 stroke ordering
+        #  스케일링 및 stroke ordering
         result = np.load("/Users/jungseyoon/Lmser-pix2seq/dataset/result.npz", allow_pickle=True, encoding='latin1')
         input = np.load("/Users/jungseyoon/Lmser-pix2seq/dataset/airplane.npz", allow_pickle=True, encoding='latin1')
         result_data = result['test']
@@ -161,7 +162,7 @@ def run():
             # input의 stroke와 reshaped의 stroke를 concatenate
             output = np.concatenate((input_data, reshaped), axis=1)
 
-            np.savez(f"/Users/jungseyoon/Lmser-pix2seq/result/second/{a}.npz", test=output)  # second, third, ...
+            np.savez(f"/Users/jungseyoon/Lmser-pix2seq/result/second/***.npz", test=output)  # second, third, ...
 
     else:  # 추가
         print("File does not exist.")
