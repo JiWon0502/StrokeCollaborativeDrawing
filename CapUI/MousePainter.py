@@ -1,7 +1,7 @@
 import tkinter as tk
 import numpy as np
 import argparse
-from utils import misc
+from CapUI.utils import misc
 import sys
 
 
