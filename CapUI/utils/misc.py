@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from . import rdpfunc
+from CapUI.utils import rdpfunc
 
 """
 def npy2npz(npy_filename, npz_filename) : converts npy to npz
@@ -60,7 +60,7 @@ def npz2npy_quickdraw(npz_filename, npy_filename):
     data = np.load(npz_filename, encoding='latin1', allow_pickle=True)
     extracted_data = data['test'][0]
     # print(extracted_data)
-    np.save('npy_filename', extracted_data)
+    np.save(npy_filename, extracted_data)
 
 
 # npz file to npy array for original quickdraw dataset
@@ -97,15 +97,19 @@ def npy2npz(npy_filename, npz_filename):
     # Check if npz_filename ends with ".npy"
     if npz_filename.endswith(".npy"):
         # Replace ".npy" with ".npz"
-        npz_filename = os.path.splitext(npz_filename)[0] + ".npz"
+        npz_filename = just_name(npz_filename) + ".npz"
     npz_data = {"test": [], "train": [], "val": []}
     data_tmp = np.empty(1, dtype=object)
     data_tmp[0] = data
     # reshaped_array = np.reshape(reshaped_array, (1,))
-    print(data_tmp.shape)
-    print(data_tmp[0].shape)
+    # print(data_tmp.shape)
+    # print(data_tmp[0].shape)
     npz_data['test'] = data_tmp
     np.savez_compressed(npz_filename, **npz_data)
+
+
+def just_name(npy_filename):
+    return os.path.splitext(npy_filename)[0]
 
 
 def coords_to_deltas(coords, lastx, lasty):
@@ -195,5 +199,7 @@ def scale_sketch(sketch, size=(256, 256)):
 
 
 if __name__ == "__main__":
+    # npy2npz("rdp_deltas.npy", "tmp.npz")
     # rdp.extract_lines_from_npy(args.data_file_name)
-    rdp_final(data_file_name='../mouse_deltas.npy', save_file_name='../rdp_deltas.npy')
+    # rdp_final(data_file_name='../mouse_deltas.npy', save_file_name='../rdp_deltas.npy')
+    pass

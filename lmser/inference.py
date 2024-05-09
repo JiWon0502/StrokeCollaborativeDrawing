@@ -2,17 +2,19 @@ import os
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
-from hyper_params import hp
+from lmser.hyper_params import hp
 import numpy as np
 import matplotlib.pyplot as plt
 import PIL
+import random
+import cv2
 
 import torch
 import torch.nn as nn
 from torch import optim
-from encoder import myencoder
-from decoder import DecoderRNN
-from utils.inference_sketch_processing import make_graph, draw_three, make_graph_
+from .encoder import myencoder
+from .decoder import DecoderRNN
+from .utils.inference_sketch_processing import make_graph, draw_three, make_graph_
 
 # cuda -> CPU
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -37,19 +39,19 @@ class SketchesDataset:
             # print(c, " : ", tmp_sketches)
             self.sketches_categroy_count.append(len(dataset[self.mode]))
             # print("category count : ", self.sketches_categroy_count)
-            print(f"dataset: {c} added.")
+            # print(f"dataset: {c} added.")
         # all the input arrays must have same number of dimensions,
         # but the array at index 0 has 3 dimension(s) and the array at index 1 has 1 dimension(s)
         # for i, arr in enumerate(tmp_sketches):
         # print(f"Dimensions of array {i + 1}: {arr.ndim}")
         data_sketches = np.concatenate(tmp_sketches)
-        print(f"length of train set: {len(data_sketches)}")
+        # print(f"length of train set: {len(data_sketches)}")
 
         data_sketches = self.purify(data_sketches)  # data clean.  # remove too long and too stort sketches.
         self.sketches = data_sketches.copy()
         self.sketches_normed = self.normalize(data_sketches)
         self.Nmax = self.max_size(data_sketches)  # max size of a sketch.
-        print(f"max length of sketch is: {self.Nmax}")
+        # print(f"max length of sketch is: {self.Nmax}")
 
     def max_size(self, sketches):
         """返回所有sketch中 转折最多的一个sketch"""
@@ -226,7 +228,7 @@ class Model:
         ret_z_list = []
 
         for sketch_index, sketch in enumerate(sketch_dataset.sketches_normed):
-            print(sketch_index)
+            # print(sketch_index)
             batch, lengths, graphs, adjs = sketch_dataset.get_sample(sketch_index)
             # encode:
             self.z, mu, sigma, _, _, _ = self.encoder(graphs)
@@ -237,7 +239,7 @@ class Model:
 
             # if sketch_index % 100 != 0 or True:
             #     continue
-            print(f"drawing {category_name} {count}")
+            # print(f"drawing {category_name} {count}")
             if hp.use_cuda:
                 sos = torch.Tensor([0, 0, 1, 0, 0]).view(1, 1, -1).to(device)  # cuda() -> to(device)
             else:
@@ -288,12 +290,12 @@ class Model:
                 print('draw error')
                 _sketch = np.zeros((256, 256, 1))
 
-            print('draw:')
+            # print('draw:')
             os.makedirs(f"{save_middle_path}/sketch/{category_name}", exist_ok=True)
             cv2.imwrite(f"{save_middle_path}/sketch/{category_name}/{sketch_index}.jpg", sketch_cv)
             # cv2.imwrite(f"{save_middle_path}/sketch/{category_name}/{sketch_index}.jpg", _sketch)
 
-            #make_image(sequence, count - 1, name=f"_{category_name}", path=f"./{save_middle_path}/sketch/")
+            # make_image(sequence, count - 1, name=f"_{category_name}", path=f"./{save_middle_path}/sketch/")
 
             os.makedirs(f"{save_middle_path}/xyz/{category_name}", exist_ok=True)  # 추가
             np.savez(f"{save_middle_path}/xyz/{category_name}/{sketch_index}.npz", x=np.array(seq_x), y=np.array(seq_y),
@@ -309,7 +311,7 @@ class Model:
                 ret_z_list = []
 
                 count = 0
-                print(f"{category_name} finished")
+                # print(f"{category_name} finished")
                 category_flag += 1
                 if category_flag < len(hp.category):
                     category_name = sketch_dataset.category[category_flag].split(".")[0]
@@ -400,20 +402,31 @@ class Model:
         self.decoder.load_state_dict(saved_decoder)
 
 
-if __name__ == "__main__":
-    import random
-    import glob
-    import cv2
+def run(index, file_name):
+    hp.mask_prob = 0.0  # 0.0 0.1 0.3 0.5
+    # print(os.getcwd())
+    hp.category = [file_name]
+    sketch_dataset = SketchesDataset(hp.data_location, hp.category, "test")
+    # hp.Nmax = sketch_dataset.Nmax
+    hp.Nmax = 177
+    hp.temperature = 0.01
+    lmser_model = Model()
+    lmser_model.load(f"./lmser/model_save/encoderRNN_epoch_150000.pth",
+                     f"./lmser/model_save/decoderRNN_epoch_150000.pth")
+    # print(hp.mask_prob, hp.Nmax)
+    lmser_model.validate(sketch_dataset, save_middle_path=f"./ai_results/{index}")
 
-    hp.mask_prob = 0.1  # 0.0 0.1 0.3 0.5
+
+if __name__ == "__main__":
+    hp.mask_prob = 0.0  # 0.0 0.1 0.3 0.5
     sketch_dataset = SketchesDataset(hp.data_location, hp.category, "test")
     hp.Nmax = sketch_dataset.Nmax
-    hp.Nmax = 177
+    # hp.Nmax = 177
     hp.temperature = 0.01
     model = Model()
     model.load(f"./model_save/encoderRNN_epoch_150000.pth",
                f"./model_save/decoderRNN_epoch_150000.pth")
 
     print(hp.mask_prob, hp.Nmax)
-    model.validate(sketch_dataset, save_middle_path=f"results/{hp.mask_prob}")
+    model.validate(sketch_dataset, save_middle_path=f"./results/{hp.mask_prob}")
     exit(0)

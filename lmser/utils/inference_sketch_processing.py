@@ -5,6 +5,7 @@ import random
 # from interval import Interval, IntervalSet
 import time
 from torchvision.transforms import transforms
+import os
 import torch
 
 
@@ -13,7 +14,9 @@ patch_trans = transforms.Compose([
     transforms.Normalize([0.5], [0.5]),
 ])
 
-mask_seed = np.load('utils/seed.npy')
+current_dir = os.path.dirname(__file__)
+seed_path = os.path.join(current_dir, 'seed.npy')
+mask_seed = np.load(seed_path)
 sketch_idx = 0
 
 def canvas_size_google(sketch):

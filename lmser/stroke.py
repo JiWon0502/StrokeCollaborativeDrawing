@@ -1,8 +1,7 @@
 import numpy as np
-import tensorflow as tf
-import subprocess
+# import tensorflow as tf
+from . import inference
 import os
-
 
 def calculate_proportion(input, output):
     cumsum_input = np.cumsum(input[0], axis=0)
@@ -52,9 +51,10 @@ def calculate_distance(p1, p2):
     return (w + h) ** (0.5)
 
 
-def find_nearest_strokes(input, result, stroke_n):
-    result_data = result['test']
-    input_data = input['test']
+def find_nearest_strokes(q, input_data, result_data, stroke_n):
+    # result_data = result['test']
+    # input_data = input['test']
+    # print("shape of input_data, result_data", input_data.shape, result_data.shape)
 
     input_n = len(input_data[0])  # input stroke의 개수
     result_n = len(result_data[0])  # output stroke의 개수
@@ -117,52 +117,83 @@ def xy2dxdy(xy):
     return dxdy
 
 
-def run():
+# file_path : .npz file after rdp algorithm
+def run(current_index: int, file_name : str):
     p = 4  # number of maximum added strokes
     q = 4  # number of initial strokes
+    # Get the directory path of the current script
+    npz_file = file_name + '.npz'
+    """
+    # 설명1: 직전에 UI로부터 p개의 stroke를 입력받은 Input 데이터 ('test')
+    # file_path = f"/Users/jungseyoon/Lmser-pix2seq/result/first/*.npz"  # 추가 first, second, ...
+    """
+    if not os.path.exists(npz_file):
+        print("File does not exist.")
 
-    file_path = f"/Users/jungseyoon/Lmser-pix2seq/result/first/*.npz"  # 추가 first, second, ...
+    else:
+        """
+        # data = np.load(file_path, allow_pickle=True, encoding='latin1')  # 추가
+        # test_data = data['test']  # 추가
+        # 설명2: 설명1과 동일한 데이터를 Lmser-pix2seq/dataset/airplane.npz로 저장 -> 이렇게 해야 inference.py가 input 데이터를 인식할 수 있음 ('test')
+        # np.savez('/Users/jungseyoon/Lmser-pix2seq/dataset/airplane.npz', test=test_data)  # 추가
+        """
 
-    if os.path.exists(file_path):  # 추가
-        data = np.load(file_path, allow_pickle=True, encoding='latin1')  # 추가
-        test_data = data['test']  # 추가
-        np.savez('/Users/jungseyoon/Lmser-pix2seq/dataset/airplane.npz', test=test_data)  # 추가
+        # file_path의 데이터를 inference.py가 인식 할 수 있는 곳으로 이동
+        # original input .npz file after rdp가 file_name에 저장되어 있음
 
-        #  subprocess 모듈을 사용하여 Python 스크립트 실행
-        subprocess.run(["python", "inference.py"])
-
+        # subprocess 모듈을 사용하여 Python 스크립트 실행
+        # import inference -> call a method run
+        inference.run(current_index, npz_file)
+        dir_name = file_name
         #  reshaped: 0.npz -> result.npz
-        result = np.load('/Users/jungseyoon/Lmser-pix2seq/results/0.0/xyz/airplane/0.npz')
+        # 설명3: inference.py의 결과 ('x', 'y', 'z')
+        # result = np.load('/Users/jungseyoon/Lmser-pix2seq/results/0.0/xyz/airplane/0.npz')
+        result = np.load(f'./ai_results/{current_index}/xyz/{dir_name}/0.npz')
         _npy_data = np.stack((result['x'], result['y'], result['z']), axis=1)
+        # print(_npy_data.shape)
         reshaped = np.expand_dims(_npy_data, axis=0)
-        np.savez('/Users/jungseyoon/Lmser-pix2seq/dataset/result.npz', test=reshaped)
+        # sprint("reshaped shape : ", reshaped.shape)
+        # 설명4: 설명3의 data reshaped -> 'test'
+        # *** np.savez('/Users/jungseyoon/Lmser-pix2seq/dataset/result.npz', test=reshaped)
 
-        #  스케일링 및 stroke ordering
-        result = np.load("/Users/jungseyoon/Lmser-pix2seq/dataset/result.npz", allow_pickle=True, encoding='latin1')
-        input = np.load("/Users/jungseyoon/Lmser-pix2seq/dataset/airplane.npz", allow_pickle=True, encoding='latin1')
-        result_data = result['test']
-        input_data = input['test']
+        #  scale & stroke ordering
+        # 설명5: 설명4의 데이터를 load ('test')
+        # *** result = np.load("/Users/jungseyoon/Lmser-pix2seq/dataset/result.npz", allow_pickle=True, encoding='latin1')
+        # 설명6: 설명2의 데이터를 load ('test')
+        # original input .npz file after rdp
+        # input 이랑 data 차이가 뭐임...
+        input = np.load(npz_file, allow_pickle=True, encoding='latin1')
+        # input = np.load("/Users/yoonjiwon/PycharmProjects/demo_1st/lmser/dataset/belt.npz", allow_pickle=True, encoding='latin1')
 
-        input_n = len(input_data[0])  # input의 stroke의 개수
+        result_data = reshaped
+        # print("result data type : ", type(result_data))
+        # print("result_data shape : ", result_data.shape)
+        input_data = input['test'][0]
+        input_for_selection = np.expand_dims(input_data, axis=0)
+        # print("input data shape : ", input_data.shape)
+        # print("input_for_selection shape : ", input_for_selection.shape)
+        input_n = len(input_for_selection[0])  # input의 stroke의 개수
         result_n = len(result_data[0])  # result의 stroke의 개수
-
+        # print("input len, result len : ", input_n, result_n)
         if input_n >= result_n:  # input의 stroke 개수 >= output의 stroke 개수
             print("LMSER 실패")
+
         else:
             if result_n - input_n < p:
-                selected_xy = find_nearest_strokes(input, result, result_n - input_n)
+                selected_xy = find_nearest_strokes(q, input_for_selection, result_data, result_n - input_n)
             else:
-                selected_xy = find_nearest_strokes(input, result, p)
-            selected = xy2dxdy(selected_xy)
-            reshaped = selected.reshape(1, len(selected), 3)
+                selected_xy = find_nearest_strokes(q, input_for_selection, result_data, p)
+            selected = xy2dxdy(selected_xy) # dx, dy, penstate
+            # reshaped = selected.reshape(1, len(selected), 3)
 
             # 마지막 요소의 pen_state를 1로 바꾸기
             # selected_points[0][len(selected_points[0]) - 1][2] = 1
 
             # input의 stroke와 reshaped의 stroke를 concatenate
-            output = np.concatenate((input_data, reshaped), axis=1)
-
-            np.savez(f"/Users/jungseyoon/Lmser-pix2seq/result/second/***.npz", test=output)  # second, third, ...
-
-    else:  # 추가
-        print("File does not exist.")
+            # print("selected shape : ", selected.shape)
+            # print("input_data shape : ", input_data.shape)
+            output = np.concatenate((input_data, selected), axis = 0)
+            # print("output shape : ", output.shape)
+            # 설명7: 설명4에서 p개의 stroke를 선택한 다음 이를 설명2와 합친 결과 ('test')
+            # np.savez(f'{dir_name}_result.npz', output)
+            np.save(file_name+".npy", output)
