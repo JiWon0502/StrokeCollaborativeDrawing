@@ -54,7 +54,7 @@ def calculate_distance(p1, p2):
 def find_nearest_strokes(q, input_data, result_data, stroke_n):
     # result_data = result['test']
     # input_data = input['test']
-    print("shape of input_data, result_data", input_data.shape, result_data.shape)
+    # print("shape of input_data, result_data", input_data.shape, result_data.shape)
 
     input_n = len(input_data[0])  # input stroke의 개수
     result_n = len(result_data[0])  # output stroke의 개수
@@ -177,6 +177,7 @@ def run(current_index: int, file_name : str):
         # print("input len, result len : ", input_n, result_n)
         if input_n >= result_n:  # input의 stroke 개수 >= output의 stroke 개수
             print("LMSER 실패")
+
         else:
             if result_n - input_n < p:
                 selected_xy = find_nearest_strokes(q, input_for_selection, result_data, result_n - input_n)
