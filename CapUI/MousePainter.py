@@ -57,6 +57,8 @@ class MousePainter:
     # initialize last_x, last_y, is_pressed, deltas
     def init_drawing_vars(self):
         # initialize all drawings
+        self.save_index = 0
+        self.ai_index = 0
         self.last_x = 0
         self.last_y = 0
         self.is_pressed = False

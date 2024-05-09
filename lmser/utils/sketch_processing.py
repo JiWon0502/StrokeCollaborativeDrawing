@@ -83,7 +83,7 @@ def draw_three(sketch, window_name="google", padding=30,
     return cv2.resize(canvas, (img_size, img_size))
 
 
-def make_graph(sketch, graph_num=30, graph_picture_size=128, padding=0, thickness=5,
+def make_graph(sketch, graph_num=30, graph_picture_size=256, padding=0, thickness=5,
                random_color=False, mask_prob=0.0, channel_3=False, save=""):
     """
         返回graphs, adj
