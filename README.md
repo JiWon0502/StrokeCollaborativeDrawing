@@ -21,12 +21,14 @@ or using conda
 
 ```bash
 conda env create -f conda_requirements.yaml
-````
+```
 
 
 ## Description
 
-
+```shell
+python demoUI.py
+```
 
 ## References
 
