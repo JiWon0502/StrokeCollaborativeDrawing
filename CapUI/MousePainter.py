@@ -147,12 +147,11 @@ class MousePainter:
             # Update current coordinates
             current_x += dx
             current_y += dy
-
             # If the mouse button was pressed, draw a line
-            if not mouse_button_pressed:
+            if mouse_button_pressed == 0:
                 canvas.create_line(start_x, start_y, current_x, current_y, fill="black", width=2)
-
             start_x, start_y = current_x, current_y
+        self.last_x, self.last_y = current_x, current_y
 
     # paint with a mouse
     def paint(self, event):
@@ -166,8 +165,8 @@ class MousePainter:
         if self.is_pressed:
             self.frame_draw.canvas.create_line((self.last_x, self.last_y, x, y), fill="black", width=2)
         # else:
-            # print("from print function : last_x, last_y", self.last_x, self.last_y)
         self.last_x, self.last_y = x, y
+        # print("from print function : last_x, last_y", self.last_x, self.last_y)
 
     # called when mouse button first pressed
     def start_paint(self, event):
@@ -231,6 +230,12 @@ class MousePainter:
         self.exit = True
         self.running = False
         self.root.quit()
+
+    # from ai file to save file
+    def reflect_ai(self):
+        tmp_deltas = np.load(self.ai_file_name, allow_pickle=True, encoding='latin1')
+        if tmp_deltas is not None:
+            np.save(self.save_file_name, tmp_deltas)
 
 
 if __name__ == "__main__":
