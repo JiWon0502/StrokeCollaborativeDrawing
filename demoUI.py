@@ -34,7 +34,7 @@ if __name__ == "__main__":
             # print("wait for AI")
             # print(painter.ai_file_name)
             misc.npy2npz(painter.rdp_file_name, painter.ai_file_name)
-            stroke.run(painter.save_index, misc.just_name(painter.ai_file_name))
+            stroke.run(painter.ai_index, misc.just_name(painter.ai_file_name))
             painter.load_and_reconstruct(filename=painter.ai_file_name)
             # painter.deltas_ai = painter.load_and_reconstruct(filename=painter.ai_file_name)
             painter.ai_index = painter.ai_index + 1
