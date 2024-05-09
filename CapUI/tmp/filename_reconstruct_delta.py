@@ -5,7 +5,7 @@ import sys
 def reconstruct_drawing(canvas, deltas):
     if len(deltas) == 0:
         print("no input strokes")
-        returns
+        return
         
     start_x = start_y = current_x = current_y = 0
     for dx, dy, mouse_button_pressed in deltas:

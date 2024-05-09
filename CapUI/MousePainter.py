@@ -1,7 +1,7 @@
 import tkinter as tk
 import numpy as np
 import argparse
-from utils import misc
+from CapUI.utils import misc
 import sys
 
 
@@ -10,6 +10,7 @@ class MousePainter:
         self.running = True
         self.exit = False
         self.save_index = 0
+        self.ai_index = 0
         # number of strokes to generate
         self.stroke_number = 3
         # tkinter initialize
@@ -44,7 +45,14 @@ class MousePainter:
         self.frames = [self.frame_draw, self.frame_rdp, self.frame_ai]
 
         self.create_buttons()
-        self.init_drawing_vars()
+
+        # initialize all variables
+        self.last_x = 0
+        self.last_y = 0
+        self.is_pressed = False
+        self.deltas_draw = []
+        self.deltas_rdp = []
+        self.deltas_ai = []
 
     # initialize last_x, last_y, is_pressed, deltas
     def init_drawing_vars(self):
@@ -139,12 +147,11 @@ class MousePainter:
             # Update current coordinates
             current_x += dx
             current_y += dy
-
             # If the mouse button was pressed, draw a line
-            if not mouse_button_pressed:
+            if mouse_button_pressed == 0:
                 canvas.create_line(start_x, start_y, current_x, current_y, fill="black", width=2)
-
             start_x, start_y = current_x, current_y
+        self.last_x, self.last_y = current_x, current_y
 
     # paint with a mouse
     def paint(self, event):
@@ -158,8 +165,8 @@ class MousePainter:
         if self.is_pressed:
             self.frame_draw.canvas.create_line((self.last_x, self.last_y, x, y), fill="black", width=2)
         # else:
-            # print("from print function : last_x, last_y", self.last_x, self.last_y)
         self.last_x, self.last_y = x, y
+        # print("from print function : last_x, last_y", self.last_x, self.last_y)
 
     # called when mouse button first pressed
     def start_paint(self, event):
@@ -216,13 +223,19 @@ class MousePainter:
         misc.save_with_indexed_directory("results", self.save_index, self.save_file_name, self.deltas_draw)
         misc.save_with_indexed_directory("results", self.save_index, self.rdp_file_name, self.deltas_rdp)
         misc.save_with_indexed_directory("results", self.save_index, self.ai_file_name, self.deltas_ai)
-        self.save_index = self.save_index + 1
+        self.save_index += 1
 
     # called with the button exit in every frame
     def exit_application(self):
         self.exit = True
         self.running = False
         self.root.quit()
+
+    # from ai file to save file
+    def reflect_ai(self):
+        tmp_deltas = np.load(self.ai_file_name, allow_pickle=True, encoding='latin1')
+        if tmp_deltas is not None:
+            np.save(self.save_file_name, tmp_deltas)
 
 
 if __name__ == "__main__":

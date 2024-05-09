@@ -6,7 +6,7 @@ import time
 import numpy as np
 import random
 from einops import rearrange
-from hyper_params import hp
+from .hyper_params import hp
 
 
 class SpatialGatingUnit(nn.Module):
