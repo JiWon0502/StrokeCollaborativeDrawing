@@ -2,7 +2,7 @@ import os
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
-from .hyper_params import hp
+from lmser.hyper_params import hp
 import numpy as np
 import matplotlib.pyplot as plt
 import PIL

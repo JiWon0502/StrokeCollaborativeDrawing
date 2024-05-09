@@ -45,7 +45,14 @@ class MousePainter:
         self.frames = [self.frame_draw, self.frame_rdp, self.frame_ai]
 
         self.create_buttons()
-        self.init_drawing_vars()
+
+        # initialize all variables
+        self.last_x = 0
+        self.last_y = 0
+        self.is_pressed = False
+        self.deltas_draw = []
+        self.deltas_rdp = []
+        self.deltas_ai = []
 
     # initialize last_x, last_y, is_pressed, deltas
     def init_drawing_vars(self):
