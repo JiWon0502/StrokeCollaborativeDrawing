@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
-from hyper_params import hp
+from .hyper_params import hp
 #from labml_nn.hypernetworks.hyper_lstm import HyperLSTM
 
 class DecoderRNN(nn.Module):

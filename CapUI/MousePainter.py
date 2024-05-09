@@ -10,6 +10,7 @@ class MousePainter:
         self.running = True
         self.exit = False
         self.save_index = 0
+        self.ai_index = 0
         # number of strokes to generate
         self.stroke_number = 3
         # tkinter initialize
@@ -216,7 +217,7 @@ class MousePainter:
         misc.save_with_indexed_directory("results", self.save_index, self.save_file_name, self.deltas_draw)
         misc.save_with_indexed_directory("results", self.save_index, self.rdp_file_name, self.deltas_rdp)
         misc.save_with_indexed_directory("results", self.save_index, self.ai_file_name, self.deltas_ai)
-        self.save_index = self.save_index + 1
+        self.save_index += 1
 
     # called with the button exit in every frame
     def exit_application(self):

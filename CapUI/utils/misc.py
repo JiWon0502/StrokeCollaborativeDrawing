@@ -60,7 +60,7 @@ def npz2npy_quickdraw(npz_filename, npy_filename):
     data = np.load(npz_filename, encoding='latin1', allow_pickle=True)
     extracted_data = data['test'][0]
     # print(extracted_data)
-    np.save('npy_filename', extracted_data)
+    np.save(npy_filename, extracted_data)
 
 
 # npz file to npy array for original quickdraw dataset
@@ -97,16 +97,20 @@ def npy2npz(npy_filename, npz_filename):
     # Check if npz_filename ends with ".npy"
     if npz_filename.endswith(".npy"):
         # Replace ".npy" with ".npz"
-        npz_filename = os.path.splitext(npz_filename)[0] + ".npz"
+        npz_filename = npy2npz_name(npz_filename)
     npz_data = {"test": [], "train": [], "val": []}
     data_tmp = np.empty(1, dtype=object)
     data_tmp[0] = data
     # reshaped_array = np.reshape(reshaped_array, (1,))
-    print(data_tmp.shape)
-    print(data_tmp[0].shape)
+    # print(data_tmp.shape)
+    # print(data_tmp[0].shape)
     npz_data['test'] = data_tmp
     np.savez_compressed(npz_filename, **npz_data)
 
+
+def npy2npz_name(npy_filename):
+    npz_filename = os.path.splitext(npy_filename)[0] + ".npz"
+    return npz_filename
 
 def coords_to_deltas(coords, lastx, lasty):
     # print("coords_to_deltas - coords shape : ", coords.shape)

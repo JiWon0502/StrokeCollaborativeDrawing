@@ -2,17 +2,19 @@ import os
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
-from hyper_params import hp
+from .hyper_params import hp
 import numpy as np
 import matplotlib.pyplot as plt
 import PIL
+import random
+import cv2
 
 import torch
 import torch.nn as nn
 from torch import optim
-from encoder import myencoder
-from decoder import DecoderRNN
-from utils.inference_sketch_processing import make_graph, draw_three, make_graph_
+from .encoder import myencoder
+from .decoder import DecoderRNN
+from .utils.inference_sketch_processing import make_graph, draw_three, make_graph_
 
 # cuda -> CPU
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -400,20 +402,31 @@ class Model:
         self.decoder.load_state_dict(saved_decoder)
 
 
-if __name__ == "__main__":
-    import random
-    import glob
-    import cv2
+def run(index, file_name):
+    hp.mask_prob = 0.0  # 0.0 0.1 0.3 0.5
+    print(os.getcwd())
+    hp.category = [file_name]
+    sketch_dataset = SketchesDataset(hp.data_location, hp.category, "test")
+    # hp.Nmax = sketch_dataset.Nmax
+    hp.Nmax = 177
+    hp.temperature = 0.01
+    lmser_model = Model()
+    lmser_model.load(f"./lmser/model_save/encoderRNN_epoch_150000.pth",
+                     f"./lmser/model_save/decoderRNN_epoch_150000.pth")
+    print(hp.mask_prob, hp.Nmax)
+    lmser_model.validate(sketch_dataset, save_middle_path=f"./ai_results/{index}")
 
-    hp.mask_prob = 0.1  # 0.0 0.1 0.3 0.5
+
+if __name__ == "__main__":
+    hp.mask_prob = 0.0  # 0.0 0.1 0.3 0.5
     sketch_dataset = SketchesDataset(hp.data_location, hp.category, "test")
     hp.Nmax = sketch_dataset.Nmax
-    hp.Nmax = 177
+    # hp.Nmax = 177
     hp.temperature = 0.01
     model = Model()
     model.load(f"./model_save/encoderRNN_epoch_150000.pth",
                f"./model_save/decoderRNN_epoch_150000.pth")
 
     print(hp.mask_prob, hp.Nmax)
-    model.validate(sketch_dataset, save_middle_path=f"results/{hp.mask_prob}")
+    model.validate(sketch_dataset, save_middle_path=f"./results/{hp.mask_prob}")
     exit(0)

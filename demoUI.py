@@ -1,6 +1,7 @@
 import argparse
 import CapUI.MousePainter as MP
 from CapUI.utils import misc
+from lmser import stroke
 
 parser = argparse.ArgumentParser()
 # Evaluation input filepaths
@@ -32,10 +33,10 @@ if __name__ == "__main__":
             # print("wait for AI")
             # print(painter.ai_file_name)
             misc.npy2npz(painter.rdp_file_name, painter.ai_file_name)
-
+            stroke.run(painter.save_index, misc.npy2npz_name(painter.ai_file_name))
 
             painter.load_and_reconstruct(filename=painter.ai_file_name)
             # painter.deltas_ai = painter.load_and_reconstruct(filename=painter.ai_file_name)
-
+            painter.ai_index = painter.ai_index + 1
         painter.running = True
     # print("Loop termination check")
