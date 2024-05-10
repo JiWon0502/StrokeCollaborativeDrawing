@@ -119,6 +119,7 @@ class MousePainter:
                 self.deltas_draw = np.load(filename, allow_pickle=True, encoding='latin1')
                 if isinstance(self.deltas_draw, np.ndarray):
                     self.deltas_draw = self.deltas_draw.tolist()
+                    # print(self.deltas_draw)
                 if self.deltas_draw is not None:
                     self.reconstruct_drawing(self.frame_draw.canvas)
             elif self.current_frame_index == 1:
