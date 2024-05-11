@@ -101,7 +101,8 @@ def find_nearest_strokes(q, input_data, result_data, stroke_n):
     result_n = len(result_data[0])  # output stroke의 개수
 
     selected = result_data[:, input_n:, :]
-
+    
+    '''
     # scaling ~
     input_1 = input_data[:, :q, :]
     result_1 = result_data[:, :q, :]
@@ -113,7 +114,14 @@ def find_nearest_strokes(q, input_data, result_data, stroke_n):
 
     selected = np.round(selected).astype(int)
     # ~ scaling
+    '''
 
+    # 스케일링 수정 ~
+    scale_factor = 44.18034
+    selected[:, :2] *= scale_factor
+    selected = np.round(selected).astype(int)
+    # ~ 스케일링 수정
+    
     # [dx, dy, pen_state] -> [x, y, pen_state] ~
     points = selected[0]
     dxdy = points[:, :2]  # (dx, dy) 부분
