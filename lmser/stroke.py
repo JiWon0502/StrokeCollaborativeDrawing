@@ -3,6 +3,11 @@ import numpy as np
 from . import inference
 import os
 
+class Line:
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+        
 def calculate_proportion(input, output):
     cumsum_input = np.cumsum(input[0], axis=0)
     cumsum_output = np.cumsum(output[0], axis=0)
@@ -35,21 +40,57 @@ def calculate_proportion(input, output):
     return factor_x, factor_y
 
 
-def find_first_stroke(input):
-    # np.where 함수는 조건을 만족하는 요소의 인덱스를 반환합니다.
-    # points 배열의 모든 요소 중에서 세 번째 열의 값이 1인 첫 번째 요소의 인덱스를 찾습니다.
-    # 이때, ravel() 함수를 사용하여 다차원 배열을 1차원 배열로 펼칩니다.
-    in_indices = np.where(in_points[:, :, 2].ravel() == 1)[0]
-    input_index = in_indices[0]
-    input_1 = input[:, :(input_index + 1):, :]
-    return input_1
-
-
 def calculate_distance(p1, p2):
     w = (p1[0] - p2[0]) * (p1[0] - p2[0])
     h = (p1[1] - p2[1]) * (p1[1] - p2[1])
     return (w + h) ** (0.5)
 
+
+def xy2line(cumsum):
+    lines = []
+    for i in range(1, len(cumsum)):
+        if cumsum[i - 1][2] == 0:  # 연속된 두 점이 모두 pen_state가 0인 경우
+            p1 = (cumsum[i - 1][0], cumsum[i - 1][1])
+            p2 = (cumsum[i][0], cumsum[i][1])
+            line = Line(p1, p2)
+            lines.append(line)
+    return lines
+
+
+def line2xy(lines):
+    cumsum = []
+    for l in range(len(lines)):
+        if l == 0: # 첫 번째 stroke
+            if lines[l].p1 == (0, 0):
+                cumsum.append([lines[l].p2[0], lines[l].p2[1], 0])
+            else:
+                cumsum.append([lines[l].p1[0], lines[l].p1[1], 0])
+                cumsum.append([lines[l].p2[0], lines[l].p2[1], 0])
+        else:
+            if lines[l].p1 == lines[l - 1].p2: # 연속된 line
+                cumsum.append([lines[l].p2[0], lines[l].p2[1], 0])
+            else: # 끊어진 line
+                cumsum[len(cumsum) - 1][2] = 1 
+                cumsum.append([lines[l].p1[0], lines[l].p1[1], 0])
+                cumsum.append([lines[l].p2[0], lines[l].p2[1], 0])
+    cumsum[len(cumsum) - 1][2] = 1
+    return cumsum
+
+
+def print_line(lines):
+    for i in range(0, len(lines)):
+        print("p1: ", lines[i].p1)
+        print("p2: ", lines[i].p2)
+
+
+def find_nearest_point(line, coord):
+    distance1 = calculate_distance(line.p1, coord)
+    distance2 = calculate_distance(line.p2, coord)
+    if distance1 <= distance2:
+        return 1
+    else:
+        return 2
+        
 
 def find_nearest_strokes(q, input_data, result_data, stroke_n):
     # result_data = result['test']
@@ -60,7 +101,8 @@ def find_nearest_strokes(q, input_data, result_data, stroke_n):
     result_n = len(result_data[0])  # output stroke의 개수
 
     selected = result_data[:, input_n:, :]
-
+    
+    '''
     # scaling ~
     input_1 = input_data[:, :q, :]
     result_1 = result_data[:, :q, :]
@@ -72,7 +114,14 @@ def find_nearest_strokes(q, input_data, result_data, stroke_n):
 
     selected = np.round(selected).astype(int)
     # ~ scaling
+    '''
 
+    # 스케일링 수정 ~
+    scale_factor = 44.18034
+    selected[:, :2] *= scale_factor
+    selected = np.round(selected).astype(int)
+    # ~ 스케일링 수정
+    
     # [dx, dy, pen_state] -> [x, y, pen_state] ~
     points = selected[0]
     dxdy = points[:, :2]  # (dx, dy) 부분
@@ -84,17 +133,50 @@ def find_nearest_strokes(q, input_data, result_data, stroke_n):
     cumsum = np.concatenate((xy, pen), axis=-1)
 
     start_point = np.array([0, 0, 0])
+    if result_data[0][len(input_data) - 1][2] == 1:
+        start_point = np.array([0, 0, 1])
+        
     cumsum = np.vstack((start_point, cumsum))
     # ~ [dx, dy, pen_state] -> [x, y, pen_state]
 
-    # sorting ~
-    distances = [(calculate_distance([0, 0], [point[0], point[1]]), idx) for idx, point in enumerate(cumsum[1:])]
+    # 수정 ~
+    lines = xy2line(cumsum)
+    
+    selected_lines = []
+    
+    coord = (0, 0)
+    if stroke_n > len(lines):
+        stroke_n = len(lines)
+    for s in range(0, stroke_n): # stroke_n 개의 line을 선택
+        min_distance = 10000
+        min_index = 0
+        for d in range(len(lines)):
+            point = find_nearest_point(lines[d], coord)
+            distance = 0
+            if point == 1:
+                distance = calculate_distance(lines[d].p1, coord)
+            else:
+                distance = calculate_distance(lines[d].p2, coord)
+                
+            if min_distance > distance:
+                min_distance = distance
+                min_index = d
+                
+        point = find_nearest_point(lines[min_index], coord)
 
-    distances.sort()  # 거리가 가까운 순으로 정렬
-    indices = [idx for _, idx in distances[:stroke_n]]  # 가장 가까운 점들의 인덱스 추출
+        if point == 2:
+            temp = lines[min_index].p1
+            lines[min_index].p1 = lines[min_index].p2
+            lines[min_index].p2 = temp
+        coord = lines[min_index].p2
+        selected_lines.append(lines[min_index])
+        lines.pop(min_index)
+        
+        s = s + 1
 
-    selected = np.array([cumsum[idx + 1] for idx in indices])
-    # ~ sorting
+    cumsum = line2xy(selected_lines)
+    selected = np.array(cumsum)
+    # ~ 수정
 
     return selected
 
@@ -185,9 +267,6 @@ def run(current_index: int, file_name : str):
                 selected_xy = find_nearest_strokes(q, input_for_selection, result_data, p)
             selected = xy2dxdy(selected_xy) # dx, dy, penstate
             # reshaped = selected.reshape(1, len(selected), 3)
-
-            # 마지막 요소의 pen_state를 1로 바꾸기
-            # selected_points[0][len(selected_points[0]) - 1][2] = 1
 
             # input의 stroke와 reshaped의 stroke를 concatenate
             # print("selected shape : ", selected.shape)

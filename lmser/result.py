@@ -19,11 +19,17 @@ for a in range(100):
         
         plt.figure()  # 새로운 figure 생성
         
-        for i in range(1, len(cumsum)):
-            if points[i - 1, 2] != 0: # (i - 1)번째 점이 "누름" 상태가 아닌 경우
-                plt.plot(cumsum[i - 1 : i + 1, 0], cumsum[i - 1 : i + 1, 1], marker='o', color='red') # (i - 1)번째 점과 i번째 점 잇기
+        #for i in range(1, len(cumsum)):
+            #if points[i - 1, 2] != 0: # (i - 1)번째 점이 "누름" 상태가 아닌 경우
+                #plt.plot(cumsum[i - 1 : i + 1, 0], cumsum[i - 1 : i + 1, 1], marker='o', color='red') # (i - 1)번째 점과 i번째 점 잇기
+            #else:
+                #plt.plot(cumsum[i - 1 : i + 1, 0], cumsum[i - 1 : i + 1, 1], marker='o', color='blue') # (i - 1)번째 점과 i번째 점 잇기
+
+        for i in range(0, len(points)):
+            if points[i, 2] != 0:
+                plt.plot(cumsum[i : i + 2, 0], cumsum[i : i + 2, 1], marker='o', color='red')
             else:
-                plt.plot(cumsum[i - 1 : i + 1, 0], cumsum[i - 1 : i + 1, 1], marker='o', color='blue') # (i - 1)번째 점과 i번째 점 잇기
+                plt.plot(cumsum[i : i + 2, 0], cumsum[i : i + 2, 1], marker='o', color='blue')
         
         plt.title(i)
         plt.xlabel('x')
