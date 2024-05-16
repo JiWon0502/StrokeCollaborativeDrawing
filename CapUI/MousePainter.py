@@ -90,7 +90,7 @@ class MousePainter:
         self.frame_draw.canvas.bind("<ButtonRelease-1>", self.stop_paint)
         self.frame_draw.canvas.bind("<B1-Motion>", self.paint)
 
-        erase_button = tk.Button(self.frame_draw, text="Erase", command=self.clear_canvas)
+        erase_button = tk.Button(self.frame_draw, text="Erase", command=self.erase_application)
         erase_button.grid(row=2, column=0, sticky="se")
 
         save_button = tk.Button(self.frame_draw, text="Save Deltas", command=self.save_deltas)
@@ -205,7 +205,7 @@ class MousePainter:
             self.root.mainloop()
 
     # called with the button erase in frame_draw
-    def clear_canvas(self):
+    def erase_application(self):
         if self.current_frame_index != 0:
             return
         # Delete all items drawn on the canvas
