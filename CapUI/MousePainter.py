@@ -69,9 +69,9 @@ class MousePainter:
     # Initialize the buttons
     def create_buttons(self):
         # Create buttons
-        self.next_button = tk.Button(self.root, text="Next Step", command=self.next_application)
-        self.save_button = tk.Button(self.root, text="Save Process / Results", command=self.save_application)
-        self.exit_button = tk.Button(self.root, text="Press here to Exit", command=self.exit_application)
+        self.next_button = tk.Button(self.root, text="Next Step", command=self.next_button)
+        self.save_button = tk.Button(self.root, text="Save Process / Results", command=self.save_button)
+        self.exit_button = tk.Button(self.root, text="Press here to Exit", command=self.exit_button)
 
         # Place buttons
         self.next_button.grid(row=1, column=0, sticky="ew")
@@ -90,10 +90,10 @@ class MousePainter:
         self.frame_draw.canvas.bind("<ButtonRelease-1>", self.stop_paint)
         self.frame_draw.canvas.bind("<B1-Motion>", self.paint)
 
-        erase_button = tk.Button(self.frame_draw, text="Erase", command=self.erase_application)
+        erase_button = tk.Button(self.frame_draw, text="Erase", command=self.erase_button)
         erase_button.grid(row=2, column=0, sticky="se")
 
-        save_button = tk.Button(self.frame_draw, text="Save Deltas", command=self.save_deltas)
+        save_button = tk.Button(self.frame_draw, text="Save Deltas", command=self.save_deltas_button)
         save_button.grid(row=2, column=1, sticky="se")
 
     # button Implementation!!!!!!
@@ -193,19 +193,19 @@ class MousePainter:
         # print("stop_paint function called,\n (last x, last y)", self.last_x, self.last_y)
         self.is_pressed = False
 
-    # called with the button in frame_draw
-    def save_deltas(self):
-        if self.current_frame_index != 0:
-            return
-        np.save(self.save_file_name, np.array(self.deltas_draw))
-
     # run while self.running == True
     def run(self):
         while self.running:
             self.root.mainloop()
 
+    # called with the button in frame_draw
+    def save_deltas_button(self):
+        if self.current_frame_index != 0:
+            return
+        np.save(self.save_file_name, np.array(self.deltas_draw))
+
     # called with the button erase in frame_draw
-    def erase_application(self):
+    def erase_button(self):
         if self.current_frame_index != 0:
             return
         # Delete all items drawn on the canvas
@@ -213,7 +213,7 @@ class MousePainter:
         self.init_drawing_vars()
 
     # called with next_button -> stop the tkinter and return to main function
-    def next_application(self):
+    def next_button(self):
         # print(self.current_frame_index, self.frames[self.current_frame_index])
         # self.current_frame_index == 0 : Mouse Drawing -> RDP
         # self.current_frame_index == 1 : RDP algorithm -> AI
@@ -222,14 +222,14 @@ class MousePainter:
         self.running = False
         self.root.quit()
 
-    def save_application(self):
+    def save_button(self):
         misc.save_with_indexed_directory("results", self.save_index, self.save_file_name, self.deltas_draw)
         misc.save_with_indexed_directory("results", self.save_index, self.rdp_file_name, self.deltas_rdp)
         misc.save_with_indexed_directory("results", self.save_index, self.ai_file_name, self.deltas_ai)
         self.save_index += 1
 
     # called with the button exit in every frame
-    def exit_application(self):
+    def exit_button(self):
         self.exit = True
         self.running = False
         self.root.quit()
