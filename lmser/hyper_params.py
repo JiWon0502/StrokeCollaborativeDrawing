@@ -38,7 +38,7 @@ class HParams:
         self.max_seq_length = 200
         self.min_seq_length = 0
 
-        #Unused (only for SketchHealer). 
+        # Unused (only for SketchHealer).
         self.Nmax = 0  # max stroke number of a sketch
         self.graph_number = 1 + 20  # the number of graph for each sketch,first for global
         self.graph_picture_size = 128  # size of graph 128
@@ -47,7 +47,7 @@ class HParams:
 
         self.mask_prob = 0.1  # 0.1 for train. When inference is performed, it is modified in inference.py (Line 395).
         self.use_cuda = True  # 추가 ->
-        #self.use_cuda = torch.cuda.is_available()
+        # self.use_cuda = torch.cuda.is_available()
         self.l2weight = 0.5
 
 
