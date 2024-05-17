@@ -173,7 +173,7 @@ def find_nearest_strokes(q, input_data, result_data, stroke_n):
         lines.pop(min_index)
         
         s = s + 1
-
+    print("selected line : ",len(selected_lines))
     cumsum = line2xy(selected_lines)
     selected = np.array(cumsum)
     # ~ 수정
@@ -201,8 +201,8 @@ def xy2dxdy(xy):
 
 # file_path : .npz file after rdp algorithm
 def run(current_index: int, file_name : str):
-    p = 4  # number of maximum added strokes
-    q = 4  # number of initial strokes
+    p = 8  # number of maximum added strokes
+    q = 8  # number of initial strokes
     # Get the directory path of the current script
     npz_file = file_name + '.npz'
     """
