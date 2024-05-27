@@ -24,7 +24,7 @@ conda env create -f conda_requirements.yaml
 ```
 
 
-## Description
+## Run the program
 
 ```shell
 python demoUI.py
