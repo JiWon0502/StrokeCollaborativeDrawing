@@ -30,7 +30,7 @@ def main(filename):
     root = tk.Tk()
     root.title("Reconstruct Drawing")
 
-    canvas = tk.Canvas(root, width=400, height=400, bg="white")
+    canvas = tk.Canvas(root, width=256, height=256, bg="white")
     canvas.pack()
 
     load_button = tk.Button(root, text="Load and Reconstruct Drawing", command=lambda: load_and_reconstruct_drawing(canvas, filename))
