@@ -49,4 +49,4 @@ dependencies:
       - torchvision==0.17.2
       - typing-extensions==4.10.0
       - zipp==3.18.1
-prefix: /Users/yoonjiwon/opt/anaconda3/envs/vLmser
+prefix: /Users/userID/opt/anaconda3/envs/vLmser

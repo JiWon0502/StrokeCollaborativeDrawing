@@ -17,14 +17,14 @@ source vSCD/bin/activate
 
 pip install -r requirements.txt
 ```
-or using conda
+or using conda, change prefix to your conda path and run
 
 ```bash
 conda env create -f conda_requirements.yaml
 ```
 
 
-## Description
+## Run the program
 
 ```shell
 python demoUI.py
