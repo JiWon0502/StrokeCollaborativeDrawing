@@ -6,8 +6,7 @@ Stroke-based Collaborative Drawing between AI and Human
 ## Installation
 Implemented using python==3.9.*
 
-
-Create virtual environement
+Create virtual environment
 
 using venv, pip
 
@@ -17,11 +16,15 @@ source vSCD/bin/activate
 
 pip install -r requirements.txt
 ```
-or using conda, change prefix to your conda path and run
+or using conda, change prefix to your conda path in conda_requirements.yaml and run
 
 ```bash
 conda env create -f conda_requirements.yaml
 ```
+
+Get seed.npy(153M) file (https://github.com/CMACH508/Lmser-pix2seq - Preparing Dataset)
+ - Download random mask seed file from https://drive.google.com/file/d/1Q_LTd174AKEOi4zA3ff1Aa3j6qAR7kr8/view
+ - Move to StrokeCollaborativeDrawing-main/lmser/utils
 
 
 ## Run the program
