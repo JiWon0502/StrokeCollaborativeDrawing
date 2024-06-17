@@ -21,12 +21,7 @@ Set Python Virtual Environment
 ```bash
 cd path/to/StrokeCollaborativeDrawing-main
 conda env create -f conda_requirements.yaml
-```
-
-Run demoUI.py
-```bash
 conda activate vSCD
-python demoUI.py
 ```
 
 
