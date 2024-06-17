@@ -74,7 +74,8 @@ DecoderRNN(nn.Module) 클래스: RNN Decoder를 구현한 클래스로 encoder.p
 #### hyper_params.py
 HParams 클래스 : Image Completion 관련 매개변수를 초기화한다.
 
-#### inference.py : Lmser pix2seq의 메인 파일이며 관련된 파일들로부터 클래스와 함수를 불러오고 이를 기반으로 Image Completion을 수행한다.
+#### inference.py 
+: Lmser pix2seq의 메인 파일이며 관련된 파일들로부터 클래스와 함수를 불러오고 이를 기반으로 Image Completion을 수행한다.
 Model class : AutoEncoder를 구현한 클래스로 Lmser Block Encoder와 RNN Decoder로 구성된다.
 conditional_generation(self, sketch_dataset, save_middle_path="visualize"): Image Completion의 결과인 (dx, dy, pen_state) 형식의 다차원 배열을 .npz 파일에 저장한다.
 
