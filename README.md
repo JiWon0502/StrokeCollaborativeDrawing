@@ -38,21 +38,31 @@ python demoUI.py
 
 #### demoUI.py
 : 메인 함수로, painter 객체와 파일들을 접근하고 메소드를 부르는 역할이다.
+
 painter = MousePainter()
 : MousePainter 클래스의 객체를 선언한다.
+
 painter.current_frame_index == 0 
 : AI가 완료된 이후 그림을 그리는 단계
 : AI 모델이 저장한 Npy 파일의 데이터를 불러와  캔버스를 업데이트 하고, 마우스 입력을 받는다.
+
 painter.current_frame_index == 1
 : RDP algorithm을 사용해 마지막으로 저장된 Npy 파일의 데이터를 전처리하고, 전처리 된 데이터를 이용하여 캔버스를 업데이트 한다.
+
 painter.current_frame_index == 2
 : AI 모델을 사용하기 위해 stroke.run 메소드를 실행한다. 획이 추가된 데이터가 Npz 파일 형태이므로 이를 Npy형태로 다시 저장한 뒤, Npy 데이터를 이용하여 캔버스를 업데이트 한다.
 
 #### MousePainter class
 : 모든 인터페이스(canvas, button) 등을 구현한 클래스이다.
-load_and_reconstruct(filename = ‘mouse_deltas.npy’) : npy 파일의 이름을 받아서 저장된 파일이 있는지 확인하고, 저장된 파일에서 데이터를 읽어온 뒤 프레임에 그림으로 그린다.
-paint(event), start_paint(event), stop_paint(event) : 사용자가 그림을 그릴 차례일 때, 마우스가 눌리는 경우 start_paint, 이동하는 경우 paint, 그리고 누른 것을 떼는 경우 stop_paint가 실행된다. 그림을 그리고, (delta_x, delta_y, penstate) 상태의 행렬 데이터를 저장한다.
-save_deltas_button(), erase_button(), next_button(), save_button(), exit_button() : 각 버튼이 눌렸을 때 각자의 기능을 수행한다. save_deltas_button의 경우, 사용자가 그린 그림이 저장된 배열을 npy파일로 저장한다. erase_button의 경우, 그려진 그림을 지움과 동시에 기존의 배열도 초기화한다. next_button은 다음 단계로 넘어가는 역할이다. save_button을 누르면 현재 각 단계에서 마지막으로 저장된 파일들을 다른 폴더에 인덱스와 함께 저장한다. exit_button을 누르면 모든 과정을 마무리하고 프로그램을 종료한다.
+
+load_and_reconstruct(filename = ‘mouse_deltas.npy’)
+: npy 파일의 이름을 받아서 저장된 파일이 있는지 확인하고, 저장된 파일에서 데이터를 읽어온 뒤 프레임에 그림으로 그린다.
+
+paint(event), start_paint(event), stop_paint(event)
+: 사용자가 그림을 그릴 차례일 때, 마우스가 눌리는 경우 start_paint, 이동하는 경우 paint, 그리고 누른 것을 떼는 경우 stop_paint가 실행된다. 그림을 그리고, (delta_x, delta_y, penstate) 상태의 행렬 데이터를 저장한다.
+
+save_deltas_button(), erase_button(), next_button(), save_button(), exit_button()
+: 각 버튼이 눌렸을 때 각자의 기능을 수행한다. save_deltas_button의 경우, 사용자가 그린 그림이 저장된 배열을 npy파일로 저장한다. erase_button의 경우, 그려진 그림을 지움과 동시에 기존의 배열도 초기화한다. next_button은 다음 단계로 넘어가는 역할이다. save_button을 누르면 현재 각 단계에서 마지막으로 저장된 파일들을 다른 폴더에 인덱스와 함께 저장한다. exit_button을 누르면 모든 과정을 마무리하고 프로그램을 종료한다.
 
 ### [Lmser-pix2seq] [1]
 #### encoder.py
