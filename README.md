@@ -76,16 +76,23 @@ HParams 클래스 : Image Completion 관련 매개변수를 초기화한다.
 
 #### inference.py 
 : Lmser pix2seq의 메인 파일이며 관련된 파일들로부터 클래스와 함수를 불러오고 이를 기반으로 Image Completion을 수행한다.
+
 Model class : AutoEncoder를 구현한 클래스로 Lmser Block Encoder와 RNN Decoder로 구성된다.
+
 conditional_generation(self, sketch_dataset, save_middle_path="visualize"): Image Completion의 결과인 (dx, dy, pen_state) 형식의 다차원 배열을 .npz 파일에 저장한다.
 
 ### [Stroke Ordering]
 ### stroke.py
 Line 클래스 : Start Point인 p1(x1, y1)과 End Point인 p2(x2, y2)를 멤버로 갖고 있는 구조체이다.
+
 find_nearest_strokes (input, result, stroke_n) : Lmser pix2seq를 통해 새롭게 추가된 획 중 stroke_n개를 선택하여 순서를 재정렬한다. 이때, input은 Lmser pix2seq에 입력한 미완성된 그림이며 result는 Lmser pix2seq에 input을 입력하였을 때의 결과이다.
+
 find_nearest_point (line, coord): Line 객체인 line의 Start Point와 End Point 중 coord과 더 가까이 위치한 점을 찾아낸다. 이때, coord는 마지막으로 입력된 획의 End Point이다.
+
 calculate_distance (p1, p2) : p1(x1, y1)과 p2(x2, y2) 사이의 유클리드 거리를 계산 및 반환한다.
+
 xy2line(cumsum) : (x, y, pen_state)로 구성된 다차원 배열을 Line 객체 배열로 변환한다.
+
 line2xy(lines) : Line 객체 배열을 (x, y, pen_state)로 구성된 다차원 배열로 변환한다.
 
 
