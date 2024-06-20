@@ -6,7 +6,6 @@ __pycache__/
 ai_results/
 ai_deltas/
 *.pyc
-*.npy
 *.zip
 *.npz
 *.idea
