@@ -6,8 +6,10 @@ __pycache__/
 ai_results/
 ai_deltas/
 *.pyc
-*.npy
 *.zip
 *.npz
 *.idea
 *.iml
+ai_deltas.npy
+mouse_deltas.npy
+rdp_deltas.npy
