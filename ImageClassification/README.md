@@ -34,8 +34,6 @@ Set Environment
 ## Code Explanation
 
 
-### [UI]
-
 #### image-classification-quickdraw.ipynb
 : Image Classification을 진행하는 코드이다.
 
