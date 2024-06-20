@@ -10,3 +10,6 @@ ai_deltas/
 *.npz
 *.idea
 *.iml
+ai_deltas.npy
+mouse_deltas.npy
+rdp_deltas.npy
